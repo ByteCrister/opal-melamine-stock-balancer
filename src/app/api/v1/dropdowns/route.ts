@@ -238,3 +238,37 @@ export const DELETE = withErrorHandler(async (request: NextRequest) => {
     return { data: { success: true, message: "Deleted successfully" } };
   });
 });
+
+export const PATCH = withErrorHandler(async (request: NextRequest) => {
+  const userId = await getUserId();
+  await ConnectDB();
+  const payload = await request.json();
+  const { type, orderedIds } = payload as { type: DropdownType; orderedIds: string[] };
+
+  if (!type || !orderedIds || !Array.isArray(orderedIds)) {
+    throw new Error("Type and orderedIds array are required");
+  }
+
+  return withTransaction(async (session) => {
+    const doc = await getSingleton(userId, session);
+    const arr = doc[type] as Types.DocumentArray<
+      Types.Subdocument & { value?: string; code?: string; className?: string; deletedAt?: Date | null }
+    >;
+
+    // Create a map for quick index lookup
+    const orderMap = new Map(orderedIds.map((id, index) => [id, index]));
+    
+    arr.sort((a, b) => {
+      const idA = (a._id as Types.ObjectId).toString();
+      const idB = (b._id as Types.ObjectId).toString();
+      const indexA = orderMap.has(idA) ? orderMap.get(idA)! : Infinity;
+      const indexB = orderMap.has(idB) ? orderMap.get(idB)! : Infinity;
+      
+      if (indexA === Infinity && indexB === Infinity) return 0;
+      return indexA - indexB;
+    });
+
+    await doc.save({ session });
+    return { data: { success: true, message: "Reordered successfully" } };
+  });
+});

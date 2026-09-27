@@ -1,208 +1,580 @@
 @import "tailwindcss";
 
 /* ==========================================================================
-   Product Management Platform — Design System CSS Custom Properties
-   Source: DESIGN.md v2 (Glossy Premium SaaS)
+   Opal Melamine â€” Global Design System
+   Premium Glossy SaaS Â· Dark-first Â· Full Light Mode
    ========================================================================== */
 
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+   SECTION 1 Â· RAW PALETTE  (never used directly in components â€” use tokens)
+   â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 :root {
-    /* ---------------------------------------------------------------------- */
-    /* 1. Base Palette                                                        */
-    /* ---------------------------------------------------------------------- */
+    /* Graphite scale */
+    --color-graphite-950: #08090B;
+    --color-graphite-900: #0E1114;
+    --color-graphite-850: #13171C;
+    --color-graphite-800: #181C22;
+    --color-graphite-700: #21262E;
+    --color-graphite-600: #2C323C;
+    --color-graphite-500: #404855;
+    --color-graphite-400: #58616E;
+    --color-graphite-300: #737C8A;
 
-    --color-graphite-950: #0A0B0D;
-    --color-graphite-900: #101215;
-    --color-graphite-800: #181B1F;
-    --color-graphite-700: #22262C;
-    --color-graphite-600: #2E333B;
-    --color-graphite-400: #565D68;
-    
-    --color-fog-200:      #9BA1AB;
-    --color-fog-050:      #E9EBEF;
-    --color-white:        #FFFFFF;
+    /* Fog (light neutral) */
+    --color-fog-050: #EEF0F4;
+    --color-fog-100: #D8DCE3;
+    --color-fog-200: #9BA3AF;
 
-    /* Signature Red (Accent System) */
-    --color-crimson-400:  #FF3B57;
-    --color-crimson-500:  #E31C3D;
-    --color-crimson-600:  #C41230;
-    --color-crimson-700:  #9C0E26;
-    --color-crimson-900:  #3D0A14;
-    --color-crimson-glow: rgba(227, 28, 61, 0.35);
+    --color-white: #FFFFFF;
 
-    /* Status Palette */
+    /* Signature Crimson */
+    --color-crimson-300: #FF6B82;
+    --color-crimson-400: #FF3B57;
+    --color-crimson-500: #E31C3D;
+    --color-crimson-600: #C41230;
+    --color-crimson-700: #9C0E26;
+    --color-crimson-900: #3D0A14;
+    --color-crimson-glow: rgba(227,28,61,0.35);
+
+    /* Status */
     --color-status-success: #2FBF71;
+    --color-status-success-bg: rgba(47,191,113,0.12);
     --color-status-warning: #F5A623;
+    --color-status-warning-bg: rgba(245,166,35,0.12);
     --color-status-danger:  #E31C3D;
+    --color-status-danger-bg: rgba(227,28,61,0.12);
     --color-status-info:    #4C8DFF;
-    --color-status-neutral: #565D68;
+    --color-status-info-bg: rgba(76,141,255,0.12);
+    --color-status-neutral: #58616E;
 
-    /* ---------------------------------------------------------------------- */
-    /* 2. Gradients (The Glossy Layer)                                        */
-    /* ---------------------------------------------------------------------- */
+    /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+       SECTION 2 Â· GRADIENTS
+       â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
+    /* Buttons */
     --gradient-primary-button:       linear-gradient(180deg, #FF3B57 0%, #C41230 100%);
     --gradient-primary-button-hover: linear-gradient(180deg, #FF5670 0%, #D6183A 100%);
-    --gradient-glass-surface:        linear-gradient(180deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.01) 100%);
-    --gradient-hero-glow:            radial-gradient(circle at 50% 0%, rgba(227,28,61,0.25), transparent 60%);
-    --gradient-metric-accent:        linear-gradient(135deg, #FF3B57 0%, #7A0F22 100%);
-    --gradient-border-sheen:         linear-gradient(135deg, rgba(255,255,255,0.14), rgba(255,255,255,0) 40%);
 
-    /* ---------------------------------------------------------------------- */
-    /* 3. Semantic Tokens                                                     */
-    /* ---------------------------------------------------------------------- */
-    
-    --surface-base:    var(--color-graphite-950);
-    --surface-raised:  var(--color-graphite-800); /* Note: composite with glass-surface gradient in UI */
-    --surface-overlay: var(--color-graphite-700);
-    
+    /* Surfaces */
+    --gradient-glass-surface:   linear-gradient(160deg, rgba(255,255,255,0.055) 0%, rgba(255,255,255,0.01) 100%);
+    --gradient-glass-surface-sm:linear-gradient(160deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.01) 100%);
+    --gradient-hero-glow:       radial-gradient(ellipse 80% 50% at 50% 0%, rgba(227,28,61,0.22), transparent 65%);
+
+    /* Accents */
+    --gradient-metric-accent:   linear-gradient(135deg, #FF3B57 0%, #7A0F22 100%);
+    --gradient-border-sheen:    linear-gradient(135deg, rgba(255,255,255,0.16), rgba(255,255,255,0) 45%);
+    --gradient-crimson-subtle:  linear-gradient(135deg, rgba(227,28,61,0.15) 0%, rgba(227,28,61,0.04) 100%);
+
+    /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+       SECTION 3 Â· SEMANTIC SURFACE TOKENS  (dark defaults)
+       â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+
+    --surface-base:         var(--color-graphite-950);
+    --surface-page:         var(--color-graphite-900);
+    --surface-raised:       var(--color-graphite-800);
+    --surface-overlay:      var(--color-graphite-700);
+    --surface-sunken:       var(--color-graphite-950);
+    --surface-glass:        rgba(255,255,255,0.04);
+    --surface-glass-hover:  rgba(255,255,255,0.07);
+
+    /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+       SECTION 4 Â· TEXT TOKENS  (dark defaults)
+       â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+
     --text-primary:    var(--color-fog-050);
     --text-secondary:  var(--color-fog-200);
     --text-muted:      var(--color-graphite-400);
+    --text-placeholder:var(--color-graphite-500);
     --text-on-primary: var(--color-white);
-    
-    --border-default:  var(--color-graphite-600);
-    --border-glass:    var(--gradient-border-sheen); /* Use via border-image */
-    --focus-ring:      var(--color-crimson-400);
+    --text-on-crimson: var(--color-white);
+    --text-link:       var(--color-crimson-400);
+    --text-link-hover: var(--color-crimson-300);
 
-    /* ---------------------------------------------------------------------- */
-    /* 4. Typography Scale                                                    */
-    /* ---------------------------------------------------------------------- */
+    /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+       SECTION 5 Â· BORDER TOKENS  (dark defaults)
+       â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
-    /* Font families injected via layout.tsx */
-    --font-geist:       var(--font-display), 'Geist', ui-sans-serif, system-ui, sans-serif;
-    --font-inter:       var(--font-body), 'Inter', ui-sans-serif, system-ui, sans-serif;
-    --font-geist-mono:  var(--font-mono), 'Geist Mono', ui-monospace, monospace;
+    --border-default:   var(--color-graphite-600);
+    --border-subtle:    rgba(255,255,255,0.06);
+    --border-strong:    rgba(255,255,255,0.12);
+    --border-glass:     var(--gradient-border-sheen);
+    --border-crimson:   rgba(227,28,61,0.35);
+    --focus-ring:       var(--color-crimson-400);
+    --focus-ring-width: 2px;
 
-    /* Display */
-    --text-display-lg:      44px;
-    --leading-display-lg:   48px;
-    --text-display-md:      32px;
-    --leading-display-md:   38px;
-    
-    /* Heading */
-    --text-heading-lg:      22px;
-    --leading-heading-lg:   28px;
-    --text-heading-md:      17px;
-    --leading-heading-md:   24px;
-    
-    /* Body */
-    --text-body-lg:         15px;
-    --leading-body-lg:      22px;
-    --text-body-md:         13.5px;
-    --leading-body-md:      20px;
-    --text-body-sm:         12px;
-    --leading-body-sm:      16px;
-    
-    /* UI / Labels */
-    --text-label:           12.5px;
-    --leading-label:        16px;
-    
-    /* Metrics / Mono */
-    --text-metric-lg:       40px;
-    --leading-metric-lg:    44px;
-    --text-numeric:         13.5px;
-    --leading-numeric:      20px;
-    --text-code:            12.5px;
-    --leading-code:         18px;
+    /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+       SECTION 6 Â· TYPOGRAPHY
+       â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
-    /* Letter Spacing */
-    --tracking-tight: -0.02em;
-    --tracking-snug:  -0.01em;
-    --tracking-normal: 0em;
-    --tracking-wide:   0.01em;
+    /* Font families — var(--font-display/body/mono) are injected by Next.js via layout.tsx className */
+    --font-geist:      var(--font-display), 'Geist', ui-sans-serif, system-ui, sans-serif;
+    --font-inter:      var(--font-body),    'Inter', ui-sans-serif, system-ui, sans-serif;
+    --font-geist-mono: var(--font-mono),    'Geist Mono', ui-monospace, monospace;
 
-    /* ---------------------------------------------------------------------- */
-    /* 5. Spacing & Radius                                                    */
-    /* ---------------------------------------------------------------------- */
-    
-    --spacing-1:  4px;
-    --spacing-2:  8px;
-    --spacing-3:  12px;
-    --spacing-4:  16px;
-    --spacing-5:  20px;
-    --spacing-6:  24px;
-    --spacing-8:  32px;
-    --spacing-10: 40px;
-    --spacing-12: 48px;
-    --spacing-16: 64px;
+    /* Scale */
+    --text-display-lg:   44px;   --leading-display-lg:  52px;
+    --text-display-md:   34px;   --leading-display-md:  42px;
+    --text-heading-xl:   26px;   --leading-heading-xl:  34px;
+    --text-heading-lg:   22px;   --leading-heading-lg:  30px;
+    --text-heading-md:   17px;   --leading-heading-md:  25px;
+    --text-heading-sm:   14px;   --leading-heading-sm:  20px;
+    --text-body-lg:      15px;   --leading-body-lg:     23px;
+    --text-body-md:      13.5px; --leading-body-md:     21px;
+    --text-body-sm:      12px;   --leading-body-sm:     17px;
+    --text-label:        12.5px; --leading-label:       17px;
+    --text-micro:        11px;   --leading-micro:       15px;
+    --text-metric-lg:    40px;   --leading-metric-lg:   46px;
+    --text-numeric:      13.5px; --leading-numeric:     20px;
+    --text-code:         12.5px; --leading-code:        18px;
 
+    /* Tracking */
+    --tracking-tighter: -0.025em;
+    --tracking-tight:   -0.018em;
+    --tracking-snug:    -0.01em;
+    --tracking-normal:   0em;
+    --tracking-wide:     0.01em;
+    --tracking-wider:    0.05em;
+    --tracking-widest:   0.1em;
+
+    /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+       SECTION 7 Â· SPACING & RADIUS
+       â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+
+    --spacing-px:  1px;
+    --spacing-0:   0;
+    --spacing-1:   4px;
+    --spacing-1h:  6px;
+    --spacing-2:   8px;
+    --spacing-3:   12px;
+    --spacing-4:   16px;
+    --spacing-5:   20px;
+    --spacing-6:   24px;
+    --spacing-8:   32px;
+    --spacing-10:  40px;
+    --spacing-12:  48px;
+    --spacing-16:  64px;
+    --spacing-20:  80px;
+    --spacing-24:  96px;
+
+    --radius-xs:   4px;
     --radius-sm:   6px;
     --radius-md:   10px;
-    --radius-lg:   16px;
+    --radius-lg:   14px;
+    --radius-xl:   18px;
+    --radius-2xl:  24px;
     --radius-pill: 999px;
 
-    /* ---------------------------------------------------------------------- */
-    /* 6. Elevation & Glow                                                    */
-    /* ---------------------------------------------------------------------- */
-    
+    /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+       SECTION 8 Â· ELEVATION & GLOW  (dark defaults)
+       â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+
     --elevation-0: none;
-    --elevation-1: 0 1px 2px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.04);
-    --elevation-2: 0 8px 24px rgba(0,0,0,0.5);
-    --elevation-3: 0 24px 64px rgba(0,0,0,0.6);
+    --elevation-1: 0 1px 3px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.05);
+    --elevation-2: 0 4px 16px rgba(0,0,0,0.50), 0 1px 4px rgba(0,0,0,0.3);
+    --elevation-3: 0 12px 40px rgba(0,0,0,0.60), 0 4px 12px rgba(0,0,0,0.4);
+    --elevation-4: 0 24px 72px rgba(0,0,0,0.70), 0 8px 24px rgba(0,0,0,0.5);
 
-    --glow-primary-cta:       0 0 0 1px rgba(227,28,61,0.4), 0 4px 20px rgba(227,28,61,0.35);
-    --glow-primary-cta-hover: 0 0 0 1px rgba(255,59,87,0.6), 0 6px 28px rgba(255,59,87,0.45);
+    /* Glows */
+    --glow-primary-cta:       0 0 0 1px rgba(227,28,61,0.45), 0 4px 20px rgba(227,28,61,0.35);
+    --glow-primary-cta-hover: 0 0 0 1px rgba(255,59,87,0.65), 0 6px 28px rgba(255,59,87,0.45);
     --glow-active-nav:        inset 2px 0 0 #E31C3D, 0 0 16px rgba(227,28,61,0.2);
+    --glow-card-crimson:      0 0 0 1px rgba(227,28,61,0.15), 0 8px 32px rgba(227,28,61,0.12);
+    --glow-success:           0 0 0 1px rgba(47,191,113,0.35), 0 4px 16px rgba(47,191,113,0.2);
+    --glow-info:              0 0 0 1px rgba(76,141,255,0.35), 0 4px 16px rgba(76,141,255,0.2);
 
-    /* ---------------------------------------------------------------------- */
-    /* 7. Motion                                                              */
-    /* ---------------------------------------------------------------------- */
-    
-    --motion-fast:     100ms;
-    --motion-base:     180ms;
-    --motion-slow:     280ms;
-    --motion-ease-std: cubic-bezier(0.4, 0, 0.2, 1);
-    --motion-ease-emp: cubic-bezier(0.16, 1, 0.3, 1);
+    /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+       SECTION 9 Â· MOTION
+       â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+
+    --motion-instant: 50ms;
+    --motion-fast:    100ms;
+    --motion-base:    180ms;
+    --motion-slow:    280ms;
+    --motion-lazy:    420ms;
+
+    --ease-std:  cubic-bezier(0.4, 0, 0.2, 1);
+    --ease-out:  cubic-bezier(0, 0, 0.2, 1);
+    --ease-in:   cubic-bezier(0.4, 0, 1, 1);
+    --ease-emp:  cubic-bezier(0.16, 1, 0.3, 1);  /* Expressive / spring-like */
+    --ease-back: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+    /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+       SECTION 10 Â· COMPONENT TOKENS  (dark defaults)
+       â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+
+    /* --- Cards & Panels --- */
+    --card-bg:               var(--color-graphite-800);
+    --card-bg-overlay:       var(--gradient-glass-surface);
+    --card-border:           rgba(255,255,255,0.07);
+    --card-shadow:           var(--elevation-2);
+    --card-radius:           var(--radius-lg);
+    --card-hover-border:     rgba(255,255,255,0.12);
+    --card-hover-shadow:     var(--elevation-3);
+
+    /* --- Buttons --- */
+    --btn-ghost-hover-bg:    rgba(255,255,255,0.07);
+    --btn-ghost-active-bg:   rgba(255,255,255,0.04);
+    --btn-secondary-bg:      rgba(255,255,255,0.06);
+    --btn-secondary-border:  rgba(255,255,255,0.09);
+    --btn-secondary-hover:   rgba(255,255,255,0.10);
+    --btn-destructive-bg:    rgba(227,28,61,0.15);
+    --btn-destructive-border:rgba(227,28,61,0.25);
+    --btn-destructive-hover: rgba(227,28,61,0.22);
+
+    /* --- Inputs --- */
+    --input-bg:              var(--color-graphite-850);
+    --input-border:          rgba(255,255,255,0.10);
+    --input-border-focus:    rgba(227,28,61,0.60);
+    --input-ring-focus:      rgba(227,28,61,0.20);
+    --input-text:            var(--color-fog-050);
+    --input-placeholder:     var(--color-graphite-400);
+    --input-shadow:          inset 0 1px 3px rgba(0,0,0,0.3);
+    --input-shadow-focus:    inset 0 1px 3px rgba(0,0,0,0.2), 0 0 0 3px rgba(227,28,61,0.18);
+    --input-radius:          var(--radius-md);
+
+    /* --- Tables --- */
+    --table-header-bg:       rgba(255,255,255,0.03);
+    --table-header-border:   rgba(255,255,255,0.07);
+    --table-row-border:      rgba(255,255,255,0.05);
+    --table-row-hover:       rgba(255,255,255,0.03);
+    --table-row-active:      rgba(227,28,61,0.07);
+
+    /* --- Badges / Status chips --- */
+    --badge-success-bg:      rgba(47,191,113,0.14);
+    --badge-success-text:    #3DCB7E;
+    --badge-success-border:  rgba(47,191,113,0.25);
+    --badge-warning-bg:      rgba(245,166,35,0.14);
+    --badge-warning-text:    #F5A623;
+    --badge-warning-border:  rgba(245,166,35,0.25);
+    --badge-danger-bg:       rgba(227,28,61,0.14);
+    --badge-danger-text:     var(--color-crimson-400);
+    --badge-danger-border:   rgba(227,28,61,0.25);
+    --badge-info-bg:         rgba(76,141,255,0.14);
+    --badge-info-text:       #6FA8FF;
+    --badge-info-border:     rgba(76,141,255,0.25);
+    --badge-neutral-bg:      rgba(88,97,110,0.20);
+    --badge-neutral-text:    var(--color-fog-200);
+    --badge-neutral-border:  rgba(88,97,110,0.30);
+
+    /* --- Metric cards --- */
+    --metric-card-bg:        var(--color-graphite-800);
+    --metric-card-overlay:   var(--gradient-glass-surface-sm);
+    --metric-card-border:    rgba(255,255,255,0.07);
+    --metric-card-shadow:    var(--elevation-2);
+    --metric-value-color:    var(--color-fog-050);
+
+    /* --- Navigation / Tabs --- */
+    --tab-bg:                transparent;
+    --tab-active-bg:         rgba(227,28,61,0.12);
+    --tab-active-border:     var(--color-crimson-500);
+    --tab-hover-bg:          rgba(255,255,255,0.04);
+    --tab-text:              var(--text-muted);
+    --tab-active-text:       var(--color-fog-050);
+
+    /* --- Dialogs / Modals --- */
+    --dialog-bg:             var(--color-graphite-800);
+    --dialog-bg-overlay:     linear-gradient(160deg, rgba(255,255,255,0.055) 0%, rgba(255,255,255,0) 60%);
+    --dialog-border:         rgba(255,255,255,0.09);
+    --dialog-shadow:         var(--elevation-4);
+    --dialog-radius:         var(--radius-xl);
+    --dialog-backdrop:       rgba(0,0,0,0.65);
+
+    /* --- Dropdowns / Popovers --- */
+    --popover-bg:            var(--color-graphite-800);
+    --popover-bg-overlay:    var(--gradient-glass-surface);
+    --popover-border:        rgba(255,255,255,0.09);
+    --popover-shadow:        0 16px 48px rgba(0,0,0,0.55), 0 4px 16px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.07);
+    --popover-radius:        var(--radius-lg);
+    --popover-item-hover:    rgba(255,255,255,0.06);
+    --popover-item-active:   rgba(227,28,61,0.12);
+    --popover-separator:     rgba(255,255,255,0.07);
+
+    /* --- Tooltips --- */
+    --tooltip-bg:            var(--color-graphite-700);
+    --tooltip-border:        rgba(255,255,255,0.10);
+    --tooltip-text:          var(--color-fog-050);
+    --tooltip-shadow:        var(--elevation-2);
+
+    /* --- Scrollbar --- */
+    --scrollbar-track:       transparent;
+    --scrollbar-thumb:       rgba(255,255,255,0.10);
+    --scrollbar-thumb-hover: rgba(255,255,255,0.18);
+
+    /* --- Skeleton loader --- */
+    --skeleton-base:         rgba(255,255,255,0.06);
+    --skeleton-highlight:    rgba(255,255,255,0.12);
+
+    /* --- Toasts --- */
+    --toast-bg:              var(--color-graphite-700);
+    --toast-border:          rgba(255,255,255,0.09);
+    --toast-shadow:          var(--elevation-3);
+
+    /* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+       SECTION 11 Â· SIDEBAR TOKENS  (dark defaults â€” see sidebar section)
+       â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+
+    --sidebar-bg:                   var(--color-graphite-900);
+    --sidebar-bg-overlay:           linear-gradient(160deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0) 60%);
+    --sidebar-border:               rgba(255,255,255,0.07);
+    --sidebar-shadow:               inset -1px 0 0 rgba(0,0,0,0.35), 4px 0 32px rgba(0,0,0,0.4);
+    --sidebar-divider:              rgba(255,255,255,0.06);
+    --sidebar-section-label:        var(--color-graphite-400);
+    --sidebar-item-hover-bg:        rgba(255,255,255,0.03);
+    --sidebar-item-hover-icon:      rgba(255,255,255,0.05);
+    --sidebar-avatar-ring-offset:   var(--color-graphite-900);
+    --sidebar-trigger-bg:           linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%);
+    --sidebar-trigger-border:       rgba(255,255,255,0.07);
+    --sidebar-trigger-shadow:       inset 0 1px 0 rgba(255,255,255,0.05);
+    --sidebar-trigger-hover:        rgba(255,255,255,0.05);
+    --sidebar-popover-bg:           var(--color-graphite-800);
+    --sidebar-popover-overlay:      linear-gradient(160deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0) 55%);
+    --sidebar-popover-border:       rgba(255,255,255,0.09);
+    --sidebar-popover-shadow:       0 24px 64px rgba(0,0,0,0.6), 0 4px 16px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08);
+    --sidebar-id-card-bg:           linear-gradient(160deg, rgba(227,28,61,0.08) 0%, rgba(255,255,255,0.02) 60%);
+    --sidebar-id-card-border:       rgba(255,255,255,0.07);
+    --sidebar-menu-icon-bg:         rgba(255,255,255,0.07);
+    --sidebar-menu-sep:             rgba(255,255,255,0.07);
+    --sidebar-dialog-bg:            var(--color-graphite-800);
+    --sidebar-dialog-overlay:       linear-gradient(160deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0) 60%);
+    --sidebar-dialog-border:        rgba(255,255,255,0.09);
+    --sidebar-dialog-shadow:        0 32px 80px rgba(0,0,0,0.7), 0 8px 24px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.09);
+    --sidebar-dialog-cancel-bg:     rgba(255,255,255,0.04);
+    --sidebar-dialog-cancel-border: rgba(255,255,255,0.10);
 }
 
-/* ==========================================================================
-   Light Mode Overrides (System Preference)
-   ========================================================================== */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+   LIGHT MODE OVERRIDES
+   â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 @media (prefers-color-scheme: light) {
     :root {
-        --surface-base:    #F5F6F8;
-        --surface-raised:  #FFFFFF;
-        --surface-overlay: #FFFFFF;
-        
-        --text-primary:    #0F1115;
-        --text-secondary:  #5B616B;
-        --text-muted:      #8A919D;
-        
-        --border-default:  #E4E6EA;
-        
-        --elevation-1: 0 1px 2px rgba(0,0,0,0.05), inset 0 1px 0 rgba(0,0,0,0.04);
-        --elevation-2: 0 4px 12px rgba(0,0,0,0.08);
-        --elevation-3: 0 12px 32px rgba(0,0,0,0.12);
-        
-        --gradient-glass-surface: none;
+        /* Surfaces */
+        --surface-base:         #F2F4F7;
+        --surface-page:         #F7F8FA;
+        --surface-raised:       #FFFFFF;
+        --surface-overlay:      #FFFFFF;
+        --surface-sunken:       #EAECF0;
+        --surface-glass:        rgba(0,0,0,0.03);
+        --surface-glass-hover:  rgba(0,0,0,0.055);
+
+        /* Text */
+        --text-primary:    #0D1117;
+        --text-secondary:  #4B5563;
+        --text-muted:      #8A929E;
+        --text-placeholder:#A8B0BC;
+        --text-on-primary: #FFFFFF;
+        --text-link:       var(--color-crimson-500);
+        --text-link-hover: var(--color-crimson-600);
+
+        /* Borders */
+        --border-default:  #DEE2E8;
+        --border-subtle:   rgba(0,0,0,0.06);
+        --border-strong:   rgba(0,0,0,0.14);
+        --border-crimson:  rgba(227,28,61,0.25);
+
+        /* Gradients that need light-mode variants */
+        --gradient-glass-surface:    linear-gradient(160deg, rgba(255,255,255,0.90) 0%, rgba(255,255,255,0.60) 100%);
+        --gradient-glass-surface-sm: linear-gradient(160deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.70) 100%);
+        --gradient-border-sheen:     linear-gradient(135deg, rgba(0,0,0,0.06), rgba(0,0,0,0) 45%);
+
+        /* Elevation */
+        --elevation-1: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+        --elevation-2: 0 4px 16px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.05);
+        --elevation-3: 0 12px 40px rgba(0,0,0,0.10), 0 4px 12px rgba(0,0,0,0.06);
+        --elevation-4: 0 24px 72px rgba(0,0,0,0.12), 0 8px 24px rgba(0,0,0,0.07);
+
+        /* Glows stay the same (crimson brand) */
+        --glow-card-crimson: 0 0 0 1px rgba(227,28,61,0.12), 0 8px 32px rgba(227,28,61,0.08);
+
+        /* --- Cards & Panels --- */
+        --card-bg:               #FFFFFF;
+        --card-bg-overlay:       none;
+        --card-border:           rgba(0,0,0,0.07);
+        --card-shadow:           var(--elevation-2);
+        --card-hover-border:     rgba(0,0,0,0.12);
+        --card-hover-shadow:     var(--elevation-3);
+
+        /* --- Buttons --- */
+        --btn-ghost-hover-bg:    rgba(0,0,0,0.05);
+        --btn-ghost-active-bg:   rgba(0,0,0,0.08);
+        --btn-secondary-bg:      rgba(0,0,0,0.04);
+        --btn-secondary-border:  rgba(0,0,0,0.10);
+        --btn-secondary-hover:   rgba(0,0,0,0.07);
+        --btn-destructive-bg:    rgba(227,28,61,0.08);
+        --btn-destructive-border:rgba(227,28,61,0.18);
+        --btn-destructive-hover: rgba(227,28,61,0.14);
+
+        /* --- Inputs --- */
+        --input-bg:              #FFFFFF;
+        --input-border:          rgba(0,0,0,0.12);
+        --input-border-focus:    rgba(227,28,61,0.55);
+        --input-ring-focus:      rgba(227,28,61,0.14);
+        --input-text:            #0D1117;
+        --input-placeholder:     #A8B0BC;
+        --input-shadow:          inset 0 1px 2px rgba(0,0,0,0.04);
+        --input-shadow-focus:    inset 0 1px 2px rgba(0,0,0,0.03), 0 0 0 3px rgba(227,28,61,0.12);
+
+        /* --- Tables --- */
+        --table-header-bg:       rgba(0,0,0,0.025);
+        --table-header-border:   rgba(0,0,0,0.08);
+        --table-row-border:      rgba(0,0,0,0.06);
+        --table-row-hover:       rgba(0,0,0,0.025);
+        --table-row-active:      rgba(227,28,61,0.04);
+
+        /* --- Badges --- */
+        --badge-success-bg:      rgba(47,191,113,0.12);
+        --badge-success-text:    #1E9955;
+        --badge-success-border:  rgba(47,191,113,0.22);
+        --badge-warning-bg:      rgba(245,166,35,0.12);
+        --badge-warning-text:    #C07900;
+        --badge-warning-border:  rgba(245,166,35,0.22);
+        --badge-danger-bg:       rgba(227,28,61,0.10);
+        --badge-danger-text:     var(--color-crimson-600);
+        --badge-danger-border:   rgba(227,28,61,0.20);
+        --badge-info-bg:         rgba(76,141,255,0.10);
+        --badge-info-text:       #2563EB;
+        --badge-info-border:     rgba(76,141,255,0.20);
+        --badge-neutral-bg:      rgba(88,97,110,0.10);
+        --badge-neutral-text:    #4B5563;
+        --badge-neutral-border:  rgba(88,97,110,0.18);
+
+        /* --- Metric cards --- */
+        --metric-card-bg:        #FFFFFF;
+        --metric-card-overlay:   none;
+        --metric-card-border:    rgba(0,0,0,0.07);
+        --metric-card-shadow:    var(--elevation-2);
+        --metric-value-color:    #0D1117;
+
+        /* --- Navigation / Tabs --- */
+        --tab-active-bg:         rgba(227,28,61,0.08);
+        --tab-hover-bg:          rgba(0,0,0,0.04);
+        --tab-text:              #8A929E;
+        --tab-active-text:       #0D1117;
+
+        /* --- Dialogs / Modals --- */
+        --dialog-bg:             #FFFFFF;
+        --dialog-bg-overlay:     none;
+        --dialog-border:         rgba(0,0,0,0.10);
+        --dialog-shadow:         var(--elevation-4);
+        --dialog-backdrop:       rgba(0,0,0,0.40);
+
+        /* --- Dropdowns / Popovers --- */
+        --popover-bg:            #FFFFFF;
+        --popover-bg-overlay:    none;
+        --popover-border:        rgba(0,0,0,0.10);
+        --popover-shadow:        0 12px 40px rgba(0,0,0,0.12), 0 4px 12px rgba(0,0,0,0.07), inset 0 1px 0 rgba(255,255,255,0.8);
+        --popover-item-hover:    rgba(0,0,0,0.04);
+        --popover-item-active:   rgba(227,28,61,0.07);
+        --popover-separator:     rgba(0,0,0,0.07);
+
+        /* --- Tooltips --- */
+        --tooltip-bg:            #1A1F26;
+        --tooltip-border:        rgba(255,255,255,0.08);
+        --tooltip-text:          #EEF0F4;
+        --tooltip-shadow:        0 8px 24px rgba(0,0,0,0.20);
+
+        /* --- Scrollbar --- */
+        --scrollbar-thumb:       rgba(0,0,0,0.14);
+        --scrollbar-thumb-hover: rgba(0,0,0,0.22);
+
+        /* --- Skeleton loader --- */
+        --skeleton-base:         rgba(0,0,0,0.06);
+        --skeleton-highlight:    rgba(0,0,0,0.10);
+
+        /* --- Toasts --- */
+        --toast-bg:              #FFFFFF;
+        --toast-border:          rgba(0,0,0,0.09);
+        --toast-shadow:          var(--elevation-3);
+
+        /* --- Sidebar light overrides --- */
+        --sidebar-bg:                   #FFFFFF;
+        --sidebar-bg-overlay:           linear-gradient(160deg, rgba(227,28,61,0.025) 0%, rgba(255,255,255,0) 60%);
+        --sidebar-border:               rgba(0,0,0,0.08);
+        --sidebar-shadow:               inset -1px 0 0 rgba(0,0,0,0.06), 4px 0 24px rgba(0,0,0,0.06);
+        --sidebar-divider:              rgba(0,0,0,0.07);
+        --sidebar-section-label:        #9BA3AF;
+        --sidebar-item-hover-bg:        rgba(0,0,0,0.03);
+        --sidebar-item-hover-icon:      rgba(0,0,0,0.06);
+        --sidebar-avatar-ring-offset:   #FFFFFF;
+        --sidebar-trigger-bg:           linear-gradient(135deg, rgba(0,0,0,0.025) 0%, rgba(0,0,0,0.01) 100%);
+        --sidebar-trigger-border:       rgba(0,0,0,0.09);
+        --sidebar-trigger-shadow:       inset 0 1px 0 rgba(255,255,255,0.90);
+        --sidebar-trigger-hover:        rgba(0,0,0,0.04);
+        --sidebar-popover-bg:           #FFFFFF;
+        --sidebar-popover-overlay:      linear-gradient(160deg, rgba(227,28,61,0.03) 0%, rgba(255,255,255,0) 55%);
+        --sidebar-popover-border:       rgba(0,0,0,0.10);
+        --sidebar-popover-shadow:       0 12px 40px rgba(0,0,0,0.14), 0 4px 12px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.8);
+        --sidebar-id-card-bg:           linear-gradient(160deg, rgba(227,28,61,0.06) 0%, rgba(245,246,248,0.8) 60%);
+        --sidebar-id-card-border:       rgba(0,0,0,0.07);
+        --sidebar-menu-icon-bg:         rgba(0,0,0,0.06);
+        --sidebar-menu-sep:             rgba(0,0,0,0.07);
+        --sidebar-dialog-bg:            #FFFFFF;
+        --sidebar-dialog-overlay:       linear-gradient(160deg, rgba(227,28,61,0.04) 0%, rgba(255,255,255,0) 60%);
+        --sidebar-dialog-border:        rgba(0,0,0,0.10);
+        --sidebar-dialog-shadow:        0 16px 48px rgba(0,0,0,0.14), 0 4px 16px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.9);
+        --sidebar-dialog-cancel-bg:     rgba(0,0,0,0.04);
+        --sidebar-dialog-cancel-border: rgba(0,0,0,0.12);
     }
 }
 
-/* ==========================================================================
-   Tailwind v4 theme extension
-   ========================================================================== */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+   TAILWIND v4 THEME EXTENSION
+   â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 @theme inline {
-    --color-background: var(--surface-base);
-    --color-surface:    var(--surface-raised);
-    --color-foreground: var(--text-primary);
-    --color-muted:      var(--text-muted);
-    --color-secondary:  var(--text-secondary);
-    --color-border:     var(--border-default);
-    --color-primary:    var(--color-crimson-500);
-    
-    --font-sans:        var(--font-geist);
-    --font-body:        var(--font-inter);
-    --font-mono:        var(--font-geist-mono);
+    /* Core */
+    --color-background:           var(--surface-base);
+    --color-surface:              var(--surface-raised);
+    --color-foreground:           var(--text-primary);
+
+    /* Text */
+    --color-muted:                var(--text-muted);
+    --color-muted-foreground:     var(--text-muted);
+    --color-secondary:            var(--text-secondary);
+    --color-secondary-foreground: var(--text-primary);
+
+    /* Borders */
+    --color-border:               var(--border-default);
+
+    /* Brand */
+    --color-primary:              var(--color-crimson-500);
+    --color-primary-foreground:   var(--color-white);
+    --color-destructive:          var(--color-status-danger);
+    --color-destructive-foreground: var(--color-white);
+
+    /* Popovers / Overlays */
+    --color-popover:              var(--popover-bg);
+    --color-popover-foreground:   var(--text-primary);
+    --color-accent:               var(--surface-overlay);
+    --color-accent-foreground:    var(--text-primary);
+
+    /* Input */
+    --color-input:                var(--input-border);
+    --color-ring:                 var(--color-crimson-500);
+
+    /* Chart colors */
+    --color-chart-1:              var(--color-crimson-400);
+    --color-chart-2:              var(--color-status-info);
+    --color-chart-3:              var(--color-status-success);
+    --color-chart-4:              var(--color-status-warning);
+    --color-chart-5:              var(--color-graphite-400);
+
+    /* Typography */
+    --font-sans:  var(--font-geist);
+    --font-body:  var(--font-inter);
+    --font-mono:  var(--font-geist-mono);
+
+    /* Radius */
+    --radius: var(--radius-md);
 }
 
-/* ==========================================================================
-   Base / Reset
-   ========================================================================== */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+   BASE / RESET
+   â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 *,
 *::before,
 *::after {
     box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
 }
 
 html {
@@ -211,66 +583,387 @@ html {
     text-rendering: optimizeLegibility;
     background: var(--surface-base);
     color: var(--text-primary);
+    scroll-behavior: smooth;
+    /* Prevent layout shift from scrollbar appearing/disappearing */
+    scrollbar-gutter: stable;
 }
 
 body {
     margin: 0;
+    min-height: 100dvh;
     background: var(--surface-base);
     color: var(--text-primary);
-    font-family: var(--font-inter);
+    font-family: var(--font-body);
     font-size: var(--text-body-lg);
     line-height: var(--leading-body-lg);
     letter-spacing: var(--tracking-normal);
+    /* Subtle page-level background texture for dark mode */
+    background-image: radial-gradient(
+        ellipse 100% 60% at 50% -10%,
+        rgba(227, 28, 61, 0.055),
+        transparent 55%
+    );
 }
 
-/* ==========================================================================
-   Typography helpers
-   ========================================================================== */
+@media (prefers-color-scheme: light) {
+    body {
+        background-image: none;
+    }
+}
+
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+   TYPOGRAPHY
+   â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-geist);
-    font-weight: 500;
+    font-family: var(--font-display);
+    font-weight: 600;
     color: var(--text-primary);
     margin: 0;
+    letter-spacing: var(--tracking-tight);
 }
 
-/* ==========================================================================
-   Focus / Accessibility
-   ========================================================================== */
+h1 { font-size: var(--text-display-md);  line-height: var(--leading-display-md); }
+h2 { font-size: var(--text-heading-xl);  line-height: var(--leading-heading-xl); }
+h3 { font-size: var(--text-heading-lg);  line-height: var(--leading-heading-lg); }
+h4 { font-size: var(--text-heading-md);  line-height: var(--leading-heading-md); font-weight: 500; }
+h5 { font-size: var(--text-heading-sm);  line-height: var(--leading-heading-sm); font-weight: 500; }
+h6 { font-size: var(--text-label);       line-height: var(--leading-label);      font-weight: 500; }
+
+p { margin: 0; }
+
+a {
+    color: var(--text-link);
+    text-decoration: none;
+    transition: color var(--motion-fast) var(--ease-std);
+}
+a:hover { color: var(--text-link-hover); }
+
+strong, b { font-weight: 600; }
+
+code, kbd, pre, samp {
+    font-family: var(--font-mono);
+    font-size: var(--text-code);
+}
+
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+   FOCUS / ACCESSIBILITY
+   â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
 :focus-visible {
-    outline: 2px solid var(--focus-ring);
+    outline: var(--focus-ring-width) solid var(--focus-ring);
     outline-offset: 2px;
     border-radius: var(--radius-sm);
 }
 
-/* ==========================================================================
-   Premium Glass Components (Helper Classes)
-   ========================================================================== */
-
-/* The standard glossy card backplate */
-.glass-panel {
-    background-color: var(--surface-raised);
-    background-image: var(--gradient-glass-surface);
-    border: 1px solid var(--border-default); /* Can use border sheen for premium versions */
-    border-radius: var(--radius-md);
-    box-shadow: var(--elevation-1);
+/* Kill the default blue focus for mouse users */
+:focus:not(:focus-visible) {
+    outline: none;
 }
 
-/* The glossy primary button */
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+   SCROLLBAR STYLING
+   â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: var(--scrollbar-track);
+}
+::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+    border-radius: var(--radius-pill);
+    transition: background var(--motion-fast) var(--ease-std);
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--scrollbar-thumb-hover);
+}
+
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+   SELECTION
+   â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+
+::selection {
+    background: rgba(227, 28, 61, 0.28);
+    color: var(--text-primary);
+}
+
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+   HELPER / UTILITY CLASSES
+   â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+
+/* Glass card â€” standard raised surface */
+.glass-panel {
+    background-color: var(--card-bg);
+    background-image: var(--card-bg-overlay);
+    border: 1px solid var(--card-border);
+    border-radius: var(--card-radius);
+    box-shadow: var(--card-shadow);
+    transition:
+        border-color var(--motion-base) var(--ease-std),
+        box-shadow   var(--motion-base) var(--ease-std);
+}
+.glass-panel:hover {
+    border-color: var(--card-hover-border);
+    box-shadow:   var(--card-hover-shadow);
+}
+
+/* Metric card */
+.metric-card {
+    background-color: var(--metric-card-bg);
+    background-image: var(--metric-card-overlay);
+    border: 1px solid var(--metric-card-border);
+    border-radius: var(--card-radius);
+    box-shadow: var(--metric-card-shadow);
+}
+
+/* Premium primary CTA button */
 .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-2);
+    padding: var(--spacing-2) var(--spacing-4);
     background-image: var(--gradient-primary-button);
     color: var(--text-on-primary);
     border-radius: var(--radius-pill);
     box-shadow: var(--glow-primary-cta);
-    font-family: var(--font-geist);
+    font-family: var(--font-display);
+    font-size: var(--text-body-md);
     font-weight: 600;
-    transition: all var(--motion-base) var(--motion-ease-std);
+    letter-spacing: var(--tracking-snug);
+    transition:
+        box-shadow     var(--motion-base) var(--ease-std),
+        background     var(--motion-base) var(--ease-std),
+        transform      var(--motion-fast) var(--ease-emp);
     border: none;
     outline: none;
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
 }
-
 .btn-primary:hover:not(:disabled) {
     background-image: var(--gradient-primary-button-hover);
     box-shadow: var(--glow-primary-cta-hover);
+    transform: translateY(-1px);
 }
+.btn-primary:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: var(--glow-primary-cta);
+}
+.btn-primary:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Secondary / ghost button */
+.btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-2);
+    padding: var(--spacing-2) var(--spacing-4);
+    background: var(--btn-secondary-bg);
+    color: var(--text-secondary);
+    border: 1px solid var(--btn-secondary-border);
+    border-radius: var(--radius-pill);
+    font-family: var(--font-display);
+    font-size: var(--text-body-md);
+    font-weight: 500;
+    letter-spacing: var(--tracking-snug);
+    transition:
+        background  var(--motion-fast) var(--ease-std),
+        border-color var(--motion-fast) var(--ease-std),
+        color        var(--motion-fast) var(--ease-std),
+        transform    var(--motion-fast) var(--ease-emp);
+    outline: none;
+    cursor: pointer;
+    user-select: none;
+}
+.btn-secondary:hover:not(:disabled) {
+    background: var(--btn-secondary-hover);
+    color: var(--text-primary);
+    transform: translateY(-1px);
+}
+.btn-secondary:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+/* Status badge */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-1);
+    padding: 2px var(--spacing-2);
+    border-radius: var(--radius-pill);
+    font-size: var(--text-micro);
+    font-weight: 700;
+    letter-spacing: var(--tracking-wider);
+    text-transform: uppercase;
+    border: 1px solid transparent;
+    line-height: 1;
+    white-space: nowrap;
+}
+.badge-success {
+    background: var(--badge-success-bg);
+    color: var(--badge-success-text);
+    border-color: var(--badge-success-border);
+}
+.badge-warning {
+    background: var(--badge-warning-bg);
+    color: var(--badge-warning-text);
+    border-color: var(--badge-warning-border);
+}
+.badge-danger {
+    background: var(--badge-danger-bg);
+    color: var(--badge-danger-text);
+    border-color: var(--badge-danger-border);
+}
+.badge-info {
+    background: var(--badge-info-bg);
+    color: var(--badge-info-text);
+    border-color: var(--badge-info-border);
+}
+.badge-neutral {
+    background: var(--badge-neutral-bg);
+    color: var(--badge-neutral-text);
+    border-color: var(--badge-neutral-border);
+}
+
+/* Glossy section label (like sidebar "Navigation") */
+.section-label {
+    font-size: var(--text-micro);
+    font-weight: 700;
+    letter-spacing: var(--tracking-widest);
+    text-transform: uppercase;
+    color: var(--text-muted);
+    user-select: none;
+}
+
+/* Divider */
+.divider {
+    border: none;
+    border-top: 1px solid var(--border-subtle);
+    margin: 0;
+}
+
+/* Skeleton pulse animation */
+@keyframes skeleton-pulse {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.45; }
+}
+.skeleton {
+    background: var(--skeleton-base);
+    border-radius: var(--radius-sm);
+    animation: skeleton-pulse 1.6s var(--ease-std) infinite;
+}
+
+/* Page-level crimson hero glow (apply to page wrapper if desired) */
+.hero-glow {
+    background-image: var(--gradient-hero-glow);
+}
+
+/* Inset sunken surface (e.g. table backgrounds, code blocks) */
+.surface-sunken {
+    background: var(--surface-sunken);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+}
+
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+   SHADCN / RADIX COMPONENT OVERRIDES
+   These target Radix portals and shared shadcn patterns so they inherit
+   the design system automatically without per-component inline styles.
+   â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+
+/* Inputs */
+input,
+textarea,
+select {
+    background: var(--input-bg);
+    color: var(--input-text);
+    border: 1px solid var(--input-border);
+    border-radius: var(--input-radius);
+    box-shadow: var(--input-shadow);
+    font-family: var(--font-body);
+    font-size: var(--text-body-md);
+    transition:
+        border-color var(--motion-fast) var(--ease-std),
+        box-shadow   var(--motion-fast) var(--ease-std);
+    outline: none;
+}
+input::placeholder,
+textarea::placeholder {
+    color: var(--input-placeholder);
+}
+input:focus,
+textarea:focus,
+select:focus {
+    border-color: var(--input-border-focus);
+    box-shadow: var(--input-shadow-focus);
+}
+
+/* Tables */
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+thead tr {
+    background: var(--table-header-bg);
+    border-bottom: 1px solid var(--table-header-border);
+}
+tbody tr {
+    border-bottom: 1px solid var(--table-row-border);
+    transition: background var(--motion-fast) var(--ease-std);
+}
+tbody tr:hover {
+    background: var(--table-row-hover);
+}
+th {
+    font-family: var(--font-display);
+    font-size: var(--text-label);
+    font-weight: 600;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--text-muted);
+    text-align: left;
+    padding: var(--spacing-3) var(--spacing-4);
+}
+td {
+    font-size: var(--text-body-md);
+    color: var(--text-secondary);
+    padding: var(--spacing-3) var(--spacing-4);
+    vertical-align: middle;
+}
+
+/* â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+   ANIMATIONS
+   â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+
+@keyframes fade-in {
+    from { opacity: 0; transform: translateY(4px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fade-out {
+    from { opacity: 1; transform: translateY(0); }
+    to   { opacity: 0; transform: translateY(4px); }
+}
+@keyframes scale-in {
+    from { opacity: 0; transform: scale(0.95); }
+    to   { opacity: 1; transform: scale(1); }
+}
+@keyframes slide-in-up {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes glow-pulse {
+    0%, 100% { box-shadow: var(--glow-primary-cta); }
+    50%       { box-shadow: var(--glow-primary-cta-hover); }
+}
+
+.animate-fade-in     { animation: fade-in     var(--motion-base) var(--ease-emp) both; }
+.animate-scale-in    { animation: scale-in    var(--motion-base) var(--ease-emp) both; }
+.animate-slide-up    { animation: slide-in-up var(--motion-base) var(--ease-emp) both; }

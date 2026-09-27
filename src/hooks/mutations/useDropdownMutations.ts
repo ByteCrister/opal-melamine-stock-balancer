@@ -1,10 +1,10 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiClient, getApiError } from "@/utils/axios";
 import { DROPDOWN_QUERY_KEYS } from "@/const/dropdown.const";
-import {
-  AddDropdownPayload,
+import {AddDropdownPayload,
   UpdateDropdownPayload,
   DeleteDropdownPayload,
+  ReorderDropdownPayload,
 } from "@/types/dropdown.types";
 import { toast } from "sonner";
 
@@ -72,6 +72,27 @@ export function useDeleteDropdownItem() {
     },
     onError: (error) => {
       toast.error(error.message || "Failed to delete item");
+    },
+  });
+}
+
+export function useReorderDropdowns() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (payload: ReorderDropdownPayload) => {
+      try {
+        const response = await apiClient.patch("/v1/dropdowns", payload);
+        return response.data;
+      } catch (error) {
+        throw new Error(getApiError(error));
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: DROPDOWN_QUERY_KEYS.all });
+    },
+    onError: (error) => {
+      toast.error(error.message || "Failed to reorder items");
     },
   });
 }

@@ -1,0 +1,89 @@
+import { NextRequest } from "next/server";
+import ConnectDB from "@/config/db";
+import StockMovementModel from "@/models/stock-movements.model";
+import ItemModel from "@/models/items.model";
+import { withErrorHandler, ApiError } from "@/lib/helpers/withErrorHandler";
+import { getUserId } from "@/lib/auth/getUserId";
+import { createStockMovementSchema } from "@/utils/zod/stock-movement.schema";
+import { sanitizeSearch } from "@/lib/helpers/sanitize-search";
+import { QueryFilter } from "mongoose";
+import { IStockMovement } from "@/models/stock-movements.model";
+import { STOCK_MOVEMENT_TYPE } from "@/const/stock.const";
+
+export const GET = withErrorHandler(async (request: NextRequest) => {
+  await getUserId(); // ensure authenticated
+  await ConnectDB();
+
+  const searchParams = request.nextUrl.searchParams;
+  const page = parseInt(searchParams.get("page") || "1", 10);
+  const limit = parseInt(searchParams.get("limit") || "10", 10);
+  const search = sanitizeSearch(searchParams.get("search")) || "";
+  const sort = searchParams.get("sort") || "desc";
+  const sortBy = searchParams.get("sortBy") || "date";
+
+  const query: QueryFilter<IStockMovement> = { 
+    deletedAt: null, 
+    type: STOCK_MOVEMENT_TYPE.STOCK_IN 
+  };
+
+  if (search) {
+    query.$or = [
+      { itemCode: { $regex: search, $options: "i" } },
+      { itemName: { $regex: search, $options: "i" } },
+    ];
+  }
+
+  const skip = (page - 1) * limit;
+
+  const sortOptions: Record<string, 1 | -1> = {};
+  sortOptions[sortBy] = sort === "asc" ? 1 : -1;
+
+  const [items, total] = await Promise.all([
+    StockMovementModel.find(query)
+      .sort(sortOptions)
+      .skip(skip)
+      .limit(limit)
+      .lean(),
+    StockMovementModel.countDocuments(query),
+  ]);
+
+  return {
+    data: {
+      items,
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
+    },
+  };
+});
+
+export const POST = withErrorHandler(async (request: NextRequest) => {
+  const userId = await getUserId();
+  await ConnectDB();
+
+  const body = await request.json();
+  const parsedData = createStockMovementSchema.parse(body);
+
+  // Validate the item actually exists
+  const item = await ItemModel.findById(parsedData.itemId).lean();
+  if (!item) {
+    throw new ApiError("Item not found", 404);
+  }
+
+  const movement = await StockMovementModel.create({
+    ...parsedData,
+    type: STOCK_MOVEMENT_TYPE.STOCK_IN,
+    createdBy: userId,
+  });
+
+  return {
+    data: {
+      success: true,
+      message: "Stock in recorded successfully",
+      movement,
+    },
+  };
+});

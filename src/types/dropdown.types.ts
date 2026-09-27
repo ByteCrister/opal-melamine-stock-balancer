@@ -42,3 +42,8 @@ export interface DeleteDropdownPayload {
   type: DropdownType;
   itemId: string;
 }
+
+export interface ReorderDropdownPayload {
+  type: DropdownType;
+  orderedIds: string[];
+}

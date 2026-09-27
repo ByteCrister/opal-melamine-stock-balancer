@@ -120,9 +120,32 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         // ------------------------------------------------------------------
         // JWT — persist user id in token
         // ------------------------------------------------------------------
-        async jwt({ token, user }) {
-            if (user?.id) {
-                token.id = user.id;
+        async jwt({ token, user, account }) {
+            if (account && user) {
+                if (account.provider === "google") {
+                    await ConnectDB();
+                    const dbUser = await UserModel.findOne({
+                        email: user.email,
+                        deletedAt: null,
+                    }).lean();
+                    if (dbUser) {
+                        token.id = dbUser._id.toString();
+                    }
+                } else if (user.id) {
+                    token.id = user.id;
+                }
+            } else if (token.id && typeof token.id === "string" && token.id.length !== 24) {
+                // Heal broken sessions where token.id is a UUID instead of ObjectId
+                if (token.email) {
+                    await ConnectDB();
+                    const dbUser = await UserModel.findOne({
+                        email: token.email,
+                        deletedAt: null,
+                    }).lean();
+                    if (dbUser) {
+                        token.id = dbUser._id.toString();
+                    }
+                }
             }
             return token;
         },

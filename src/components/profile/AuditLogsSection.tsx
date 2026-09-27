@@ -5,20 +5,19 @@ import { useUserStore } from "@/store/useUserStore";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search, ArrowUpDown, ChevronLeft, ChevronRight } from "lucide-react";
+import { useDebounce } from "@/hooks/useDebounce";
 
 export function AuditLogsSection() {
   const { audits, auditMeta, isLoadingAudits, fetchAudits } = useUserStore();
   const [search, setSearch] = useState("");
+  const debouncedSearch = useDebounce(search, 500);
   const [page, setPage] = useState(1);
   const [sort, setSort] = useState<"asc" | "desc">("desc");
 
-  // Debounce search input to avoid spamming the API
+  // Fetch audits when dependencies change
   useEffect(() => {
-    const handler = setTimeout(() => {
-      fetchAudits({ page, limit: 5, search, sort, sortBy: "createdAt" });
-    }, 500);
-    return () => clearTimeout(handler);
-  }, [page, search, sort, fetchAudits]);
+    fetchAudits({ page, limit: 5, search: debouncedSearch, sort, sortBy: "createdAt" });
+  }, [page, debouncedSearch, sort, fetchAudits]);
 
   // Handle page changes
   const handleNextPage = () => {
