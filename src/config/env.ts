@@ -21,12 +21,6 @@ const envSchema = z.object({
 
     // ── App ──────────────────────────────────────────────────────────────────
 
-    /** Public-facing domain/origin — used in emails, OAuth redirects, etc. */
-    NEXT_PUBLIC_DOMAIN: z
-        .string()
-        .url("NEXT_PUBLIC_DOMAIN must be a valid URL (e.g. http://localhost:3000)")
-        .default("http://localhost:3000"),
-
     // ── Database ─────────────────────────────────────────────────────────────
 
     /** MongoDB Atlas / local connection string */
