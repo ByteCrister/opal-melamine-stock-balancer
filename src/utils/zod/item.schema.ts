@@ -12,12 +12,12 @@ export const createItemSchema = z.object({
   color: z.string().trim().optional(),
   design: z.string().trim().optional(),
   unit: z.string().min(1, "Unit is required").trim(),
-  reorderLevel: z.coerce.number().min(0).default(0),
-  dp: z.coerce.number().min(0).optional(),
-  tp: z.coerce.number().min(0).optional(),
-  mrp: z.coerce.number().min(0).optional(),
+  reorderLevel: z.preprocess((v) => (v === "" ? undefined : v), z.coerce.number({ error: "Must be a valid number" }).min(0, "Cannot be negative")).default(0),
+  dp: z.preprocess((v) => (v === "" ? undefined : v), z.coerce.number({ error: "Must be a valid number" }).min(0, "Cannot be negative").optional()),
+  tp: z.preprocess((v) => (v === "" ? undefined : v), z.coerce.number({ error: "Must be a valid number" }).min(0, "Cannot be negative").optional()),
+  mrp: z.preprocess((v) => (v === "" ? undefined : v), z.coerce.number({ error: "Must be a valid number" }).min(0, "Cannot be negative").optional()),
   doUnit: z.string().trim().optional(),
-  doQty: z.coerce.number().min(0).optional(),
+  doQty: z.preprocess((v) => (v === "" ? undefined : v), z.coerce.number({ error: "Must be a valid number" }).min(0, "Cannot be negative").optional()),
 });
 
 export const updateItemSchema = createItemSchema.partial().extend({

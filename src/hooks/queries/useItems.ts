@@ -47,6 +47,7 @@ export interface ActiveItemOption {
   _id: string;
   itemCode: string;
   itemName: string;
+  unit: string;
 }
 
 export function useActiveItemsOptions() {

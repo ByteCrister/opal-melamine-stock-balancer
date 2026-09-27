@@ -19,11 +19,22 @@ import { Search, Plus, Edit, Trash2, Package, PackageOpen, AlertTriangle, Chevro
 import { toast } from "sonner";
 import { ItemFilters } from "@/types/item.types";
 import { FadeInUp, StaggerContainer, StaggerItem } from "@/components/shared/motion";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogFooter,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogCancel,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 export function ItemsList() {
   const router = useRouter();
   const [filters, setFilters] = useState<ItemFilters>({ page: 1, limit: 10, sort: "desc", sortBy: "createdAt" });
   const [searchInput, setSearchInput] = useState("");
+  const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
   const debouncedSearch = useDebounce(searchInput, 500);
   const activeFilters = { ...filters, search: debouncedSearch };
 
@@ -32,13 +43,18 @@ export function ItemsList() {
 
   const handlePageChange = (newPage: number) => setFilters({ ...filters, page: newPage });
 
-  const handleDelete = (id: string) => {
-    if (confirm("Are you sure you want to delete this item?")) {
-      deleteMutation.mutate(id, {
-        onSuccess: () => toast.success("Item deleted successfully"),
-        onError: (err: Error) => toast.error(err.message),
-      });
-    }
+  const confirmDelete = () => {
+    if (!deleteTargetId) return;
+    deleteMutation.mutate(deleteTargetId, {
+      onSuccess: () => {
+        toast.success("Item deleted successfully");
+        setDeleteTargetId(null);
+      },
+      onError: (err: Error) => {
+        toast.error(err.message);
+        setDeleteTargetId(null);
+      },
+    });
   };
 
   if (error) {
@@ -315,7 +331,7 @@ export function ItemsList() {
                           <Edit className="h-3.5 w-3.5" />
                         </button>
                         <button
-                          onClick={() => handleDelete(item._id)}
+                          onClick={() => setDeleteTargetId(item._id)}
                           className="h-8 w-8 rounded-[7px] flex items-center justify-center transition-colors duration-100"
                           style={{ background: "var(--badge-danger-bg)", color: "var(--badge-danger-text)" }}
                           title="Delete item"
@@ -376,6 +392,78 @@ export function ItemsList() {
           </div>
         </FadeInUp>
       )}
+
+      {/* ── Delete Confirmation Dialog ─────────────────────────────── */}
+      <AlertDialog open={!!deleteTargetId} onOpenChange={(open) => { if (!open) setDeleteTargetId(null); }}>
+        <AlertDialogTrigger className="hidden" />
+        <AlertDialogContent
+          className="max-w-sm overflow-hidden p-0 rounded-[var(--radius-xl)]"
+          style={{
+            background: "var(--card-bg)",
+            backgroundImage: "var(--card-bg-overlay)",
+            border: "1px solid var(--badge-danger-border)",
+            boxShadow: "0 0 0 1px rgba(227,28,61,0.2), var(--card-shadow), 0 0 40px rgba(227,28,61,0.12)",
+          }}
+        >
+          {/* Danger accent bar */}
+          <div
+            className="h-[3px] w-full"
+            style={{ backgroundImage: "linear-gradient(90deg, #E31C3D 0%, #FF3B57 100%)" }}
+          />
+
+          <div className="p-6">
+            <AlertDialogHeader className="items-start text-left gap-4">
+              {/* Icon */}
+              <div
+                className="h-11 w-11 rounded-[10px] flex items-center justify-center shrink-0"
+                style={{ background: "var(--badge-danger-bg)", border: "1px solid var(--badge-danger-border)" }}
+              >
+                <Trash2 className="h-5 w-5" style={{ color: "var(--badge-danger-text)" }} strokeWidth={2} />
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <AlertDialogTitle
+                  className="text-[15px] font-semibold"
+                  style={{ color: "var(--text-primary)", fontFamily: "var(--font-geist)" }}
+                >
+                  Delete Item?
+                </AlertDialogTitle>
+                <AlertDialogDescription
+                  className="text-[13px] leading-relaxed"
+                  style={{ color: "var(--text-muted)" }}
+                >
+                  This action is <span style={{ color: "var(--badge-danger-text)", fontWeight: 600 }}>permanent</span> and cannot be undone. The item and all its associated data will be removed.
+                </AlertDialogDescription>
+              </div>
+            </AlertDialogHeader>
+
+            <AlertDialogFooter className="mt-6 flex flex-row justify-end gap-2 border-0 bg-transparent p-0 -mx-0 -mb-0 rounded-none">
+              <AlertDialogCancel
+                className="px-4 h-9 rounded-[9px] text-[13px] font-medium border-0 transition-all duration-150"
+                style={{
+                  background: "var(--btn-secondary-bg)",
+                  border: "1px solid var(--btn-secondary-border)",
+                  color: "var(--text-secondary)",
+                }}
+              >
+                Cancel
+              </AlertDialogCancel>
+              <button
+                onClick={confirmDelete}
+                disabled={deleteMutation.isPending}
+                className="flex items-center gap-2 px-4 h-9 rounded-[9px] text-[13px] font-semibold text-white transition-all duration-150 hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed"
+                style={{
+                  backgroundImage: "linear-gradient(180deg, #FF3B57 0%, #C41230 100%)",
+                  boxShadow: "0 2px 10px rgba(227,28,61,0.4)",
+                }}
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+                {deleteMutation.isPending ? "Deleting…" : "Delete Item"}
+              </button>
+            </AlertDialogFooter>
+          </div>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

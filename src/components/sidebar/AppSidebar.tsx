@@ -38,7 +38,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { FadeInLeft, FadeInUp, StaggerContainer, StaggerItem } from "@/components/shared/motion";
+import { FadeInLeft, StaggerContainer, StaggerItem } from "@/components/shared/motion";
 
 export const SIDEBAR_LINKS = [
   { name: "Dashboard",      href: "/",              icon: LayoutDashboard },
@@ -203,7 +203,6 @@ function SidebarContent({ onLinkClick, onLogoutClick }: { onLinkClick?: () => vo
 
         {/* ── Profile footer ──────────────────────────────────────── */}
         <div className="p-3" style={{ borderTop: "1px solid var(--sidebar-divider)" }}>
-          <FadeInUp delay={0.4}>
           <DropdownMenu>
             <DropdownMenuTrigger
               className="group w-full px-3 py-2.5 rounded-[10px] flex items-center gap-3 outline-none transition-all duration-150 hover:brightness-95 focus-visible:ring-2 focus-visible:ring-[var(--color-crimson-400)]"
@@ -252,6 +251,7 @@ function SidebarContent({ onLinkClick, onLogoutClick }: { onLinkClick?: () => vo
               align="start"
               sideOffset={10}
               style={{
+                zIndex: 9999,
                 backgroundColor: "var(--sidebar-popover-bg)",
                 backgroundImage: "var(--sidebar-popover-overlay)",
                 border: "1px solid var(--sidebar-popover-border)",
@@ -341,7 +341,6 @@ function SidebarContent({ onLinkClick, onLogoutClick }: { onLinkClick?: () => vo
               </div>
             </DropdownMenuContent>
           </DropdownMenu>
-          </FadeInUp>
         </div>
       </>
     );

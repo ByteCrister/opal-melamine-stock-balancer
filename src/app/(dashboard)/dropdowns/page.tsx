@@ -1,6 +1,5 @@
-import { DashboardWrapper } from "@/components/wrappers/DashboardWrapper";
-import { DropdownsPage } from "@/components/dropdowns/DropdownsPage";
 import { Metadata } from "next";
+import { DropdownsPage } from "@/components/dropdowns/DropdownsPage";
 
 export const metadata: Metadata = {
   title: "Dropdowns | Opal Melamine Stock Balancer",
@@ -8,9 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function Dropdowns() {
-  return (
-    <DashboardWrapper>
-      <DropdownsPage />
-    </DashboardWrapper>
-  );
+  return <DropdownsPage />;
 }

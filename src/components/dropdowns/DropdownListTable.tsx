@@ -9,13 +9,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Input } from "@/components/ui/input";
 import { DropdownList, ClassOption, DropdownItem, DropdownType } from "@/types/dropdown.types";
 import { useDropdownStore } from "@/store/useDropdownStore";
-import { Button } from "@/components/ui/button";
-import { Pencil, Trash2, Search, GripVertical } from "lucide-react";
+import { Pencil, Trash2, Search, GripVertical, LayoutList } from "lucide-react";
 import { EditDropdownDialog } from "./EditDropdownDialog";
 import { DeleteDropdownDialog } from "./DeleteDropdownDialog";
-import { Input } from "@/components/ui/input";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useReorderDropdowns } from "@/hooks/mutations/useDropdownMutations";
 import { cn } from "@/lib/utils";
@@ -28,16 +27,25 @@ import {
   useSensor,
   useSensors,
   DragEndEvent,
-} from '@dnd-kit/core';
+} from "@dnd-kit/core";
 import {
   arrayMove,
   SortableContext,
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
   useSortable,
-} from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
+/* ── Shared input style ─────────────────────────────────────── */
+const inputStyle: React.CSSProperties = {
+  background:   "var(--input-bg)",
+  border:       "1px solid var(--input-border)",
+  color:        "var(--input-text)",
+  borderRadius: "var(--input-radius)",
+};
+
+/* ── Sortable row ───────────────────────────────────────────── */
 interface SortableTableRowProps {
   item: ClassOption | DropdownItem;
   isClasses: boolean;
@@ -57,239 +65,277 @@ function SortableTableRow({ item, isClasses, onEdit, onDelete, isDragDisabled }:
   } = useSortable({ id: item._id, disabled: isDragDisabled });
 
   const style = {
-    transform: CSS.Transform.toString(transform),
+    transform:  CSS.Transform.toString(transform),
     transition,
   };
 
   return (
-    <TableRow 
-      ref={setNodeRef} 
-      style={style} 
-      className={cn(
-        "hover:bg-muted/30 transition-colors group", 
-        isDragging && "opacity-90 relative z-50 bg-background shadow-md border"
-      )}
+    <TableRow
+      ref={setNodeRef}
+      style={{
+        ...style,
+        borderBottom: "1px solid var(--table-row-border)",
+        ...(isDragging
+          ? {
+              background: "var(--surface-overlay)",
+              boxShadow:  "var(--elevation-3)",
+              opacity:    0.95,
+              zIndex:     50,
+              position:   "relative",
+            }
+          : {}),
+      }}
+      className="group transition-colors duration-100"
+      onMouseEnter={(e) => { if (!isDragging) e.currentTarget.style.background = "var(--table-row-hover)"; }}
+      onMouseLeave={(e) => { if (!isDragging) e.currentTarget.style.background = ""; }}
     >
+      {/* Drag handle */}
       {!isDragDisabled && (
-        <TableCell className="w-[40px] px-2 text-center">
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            className="h-8 w-8 text-muted-foreground/50 hover:text-foreground cursor-grab active:cursor-grabbing" 
-            {...attributes} 
+        <TableCell className="w-[36px] px-2 text-center">
+          <button
+            className="h-7 w-7 rounded-[6px] flex items-center justify-center cursor-grab active:cursor-grabbing transition-colors duration-100"
+            style={{ color: "var(--text-muted)", background: "transparent" }}
+            {...attributes}
             {...listeners}
+            title="Drag to reorder"
           >
-            <GripVertical className="h-4 w-4" />
-          </Button>
+            <GripVertical className="h-3.5 w-3.5" />
+          </button>
         </TableCell>
       )}
+
+      {/* Data cells */}
       {isClasses ? (
         <>
-          <TableCell className={cn("font-medium text-foreground", isDragDisabled && "pl-4")}>{(item as ClassOption).code}</TableCell>
-          <TableCell className="text-muted-foreground">{(item as ClassOption).className}</TableCell>
+          <TableCell className={cn("py-3", isDragDisabled && "pl-4")}>
+            <span
+              className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-bold uppercase tracking-wider"
+              style={{
+                background: "var(--badge-neutral-bg)",
+                color:      "var(--badge-neutral-text)",
+                border:     "1px solid var(--badge-neutral-border)",
+              }}
+            >
+              {(item as ClassOption).code}
+            </span>
+          </TableCell>
+          <TableCell className="py-3 text-[13.5px] font-medium" style={{ color: "var(--text-primary)" }}>
+            {(item as ClassOption).className}
+          </TableCell>
         </>
       ) : (
-        <TableCell className={cn("font-medium text-foreground", isDragDisabled && "pl-4")}>{(item as DropdownItem).value}</TableCell>
+        <TableCell className={cn("py-3 text-[13.5px] font-medium", isDragDisabled && "pl-4")} style={{ color: "var(--text-primary)" }}>
+          {(item as DropdownItem).value}
+        </TableCell>
       )}
-      <TableCell className="text-right">
-        <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8 text-muted-foreground hover:text-primary hover:bg-primary/10"
+
+      {/* Actions */}
+      <TableCell className="py-3 text-right">
+        <div className="flex items-center justify-end gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
+          <button
             onClick={onEdit}
+            className="h-8 w-8 rounded-[7px] flex items-center justify-center transition-colors duration-100"
+            style={{ background: "var(--btn-ghost-hover-bg)", color: "var(--text-muted)" }}
+            title="Edit"
           >
-            <Pencil className="h-4 w-4" />
-            <span className="sr-only">Edit</span>
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+            <Pencil className="h-3.5 w-3.5" />
+          </button>
+          <button
             onClick={onDelete}
+            className="h-8 w-8 rounded-[7px] flex items-center justify-center transition-colors duration-100"
+            style={{ background: "var(--badge-danger-bg)", color: "var(--badge-danger-text)" }}
+            title="Delete"
           >
-            <Trash2 className="h-4 w-4" />
-            <span className="sr-only">Delete</span>
-          </Button>
+            <Trash2 className="h-3.5 w-3.5" />
+          </button>
         </div>
       </TableCell>
     </TableRow>
   );
 }
 
-interface DropdownListTableProps {
-  data?: DropdownList;
-}
-
+/* ── Filter helper ──────────────────────────────────────────── */
 function getFilteredItems(
   data: DropdownList | undefined,
   activeTab: DropdownType,
   searchQuery: string
-) {
+): (ClassOption | DropdownItem)[] {
   if (!data) return [];
-  const items = data[activeTab] || [];
-  
-  return items.filter((item: ClassOption | DropdownItem) => {
+  const items = (data[activeTab] as (ClassOption | DropdownItem)[]) || [];
+  return items.filter((item) => {
     if (item.deletedAt) return false;
-    
-    if (!searchQuery) return true;
-    
-    const query = searchQuery.toLowerCase();
+    if (!searchQuery)   return true;
+    const q = searchQuery.toLowerCase();
     if (activeTab === "classes" && "code" in item) {
-      return (
-        item.code.toLowerCase().includes(query) ||
-        item.className.toLowerCase().includes(query)
-      );
+      return item.code.toLowerCase().includes(q) || item.className.toLowerCase().includes(q);
     }
-    if ("value" in item) {
-      return item.value.toLowerCase().includes(query);
-    }
+    if ("value" in item) return item.value.toLowerCase().includes(q);
     return false;
   });
 }
 
+/* ── Main component ─────────────────────────────────────────── */
+interface DropdownListTableProps {
+  data?: DropdownList;
+}
+
 export function DropdownListTable({ data }: DropdownListTableProps) {
   const { activeTab } = useDropdownStore();
-  
-  const [editItem, setEditItem] = useState<ClassOption | DropdownItem | null>(null);
+  const [editItem,   setEditItem]   = useState<ClassOption | DropdownItem | null>(null);
   const [deleteItem, setDeleteItem] = useState<ClassOption | DropdownItem | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const debouncedSearchQuery = useDebounce(searchQuery, 300);
+  const debouncedSearch = useDebounce(searchQuery, 300);
 
   const { mutate: reorderDropdowns } = useReorderDropdowns();
 
-  const [prevDeps, setPrevDeps] = useState({
-    data,
-    activeTab,
-    searchQuery: debouncedSearchQuery,
-  });
-
-  const [itemsList, setItemsList] = useState<(ClassOption | DropdownItem)[]>(() => 
-    getFilteredItems(data, activeTab, debouncedSearchQuery)
+  const [prevDeps, setPrevDeps] = useState({ data, activeTab, searchQuery: debouncedSearch });
+  const [itemsList, setItemsList] = useState<(ClassOption | DropdownItem)[]>(
+    () => getFilteredItems(data, activeTab, debouncedSearch)
   );
 
   if (
-    data !== prevDeps.data ||
-    activeTab !== prevDeps.activeTab ||
-    debouncedSearchQuery !== prevDeps.searchQuery
+    data       !== prevDeps.data       ||
+    activeTab  !== prevDeps.activeTab  ||
+    debouncedSearch !== prevDeps.searchQuery
   ) {
-    setPrevDeps({ data, activeTab, searchQuery: debouncedSearchQuery });
-    setItemsList(getFilteredItems(data, activeTab, debouncedSearchQuery));
+    setPrevDeps({ data, activeTab, searchQuery: debouncedSearch });
+    setItemsList(getFilteredItems(data, activeTab, debouncedSearch));
   }
 
   const sensors = useSensors(
     useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
   );
 
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
-    
     if (over && active.id !== over.id) {
       setItemsList((items) => {
-        const oldIndex = items.findIndex(item => item._id === active.id);
-        const newIndex = items.findIndex(item => item._id === over.id);
-        
-        const newArray = arrayMove(items, oldIndex, newIndex);
-        
-        reorderDropdowns({
-          type: activeTab,
-          orderedIds: newArray.map(item => item._id)
-        });
-
-        return newArray;
+        const oldIdx = items.findIndex((i) => i._id === active.id);
+        const newIdx = items.findIndex((i) => i._id === over.id);
+        const next   = arrayMove(items, oldIdx, newIdx);
+        reorderDropdowns({ type: activeTab, orderedIds: next.map((i) => i._id) });
+        return next;
       });
     }
   }
 
   if (!data) return null;
 
-  const isClasses = activeTab === "classes";
-  const isDragDisabled = !!debouncedSearchQuery; // Disable drag and drop when searching
+  const isClasses     = activeTab === "classes";
+  const isDragDisabled = !!debouncedSearch;
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center">
-        <div className="relative w-full md:max-w-sm">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            type="search"
-            placeholder="Search items..."
-            className="pl-8 bg-background border-border/60 focus-visible:ring-primary/20"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </div>
+    <div className="flex flex-col gap-4">
+
+      {/* Search bar */}
+      <div className="relative w-full md:max-w-sm">
+        <Search
+          className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 pointer-events-none"
+          style={{ color: "var(--text-muted)" }}
+        />
+        <Input
+          type="search"
+          placeholder="Search items…"
+          className="pl-9 h-9 text-[13px]"
+          style={inputStyle}
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
       </div>
 
-      <div className="rounded-xl border border-border/50 overflow-hidden shadow-sm">
-        <Table>
-          <TableHeader className="bg-muted/40">
-            <TableRow className="hover:bg-transparent">
-              {!isDragDisabled && <TableHead className="w-[40px] px-2"></TableHead>}
+      {/* Drag hint */}
+      {!isDragDisabled && itemsList.length > 1 && (
+        <p className="text-[11px]" style={{ color: "var(--text-muted)" }}>
+          Drag rows to reorder. Reorder is disabled while searching.
+        </p>
+      )}
+
+      {/* Table */}
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragEnd={handleDragEnd}
+      >
+        <div
+          className="rounded-[var(--radius-lg)] overflow-hidden"
+          style={{
+            background:      "var(--surface-sunken)",
+            border:          "1px solid var(--card-border)",
+          }}
+        >
+          <Table>
+          <TableHeader>
+            <TableRow style={{ background: "var(--table-header-bg)", borderBottom: "1px solid var(--table-header-border)" }}>
+              {!isDragDisabled && <TableHead className="w-[36px] px-2" />}
               {isClasses ? (
                 <>
-                  <TableHead className={cn("w-[150px] font-semibold", isDragDisabled && "pl-4")}>Code</TableHead>
-                  <TableHead className="font-semibold">Class Name</TableHead>
+                  <TableHead
+                    className={cn("text-[11px] font-semibold uppercase tracking-widest py-3 w-[140px]", isDragDisabled && "pl-4")}
+                    style={{ color: "var(--text-muted)" }}
+                  >
+                    Code
+                  </TableHead>
+                  <TableHead className="text-[11px] font-semibold uppercase tracking-widest py-3" style={{ color: "var(--text-muted)" }}>
+                    Class Name
+                  </TableHead>
                 </>
               ) : (
-                <TableHead className={cn("font-semibold", isDragDisabled && "pl-4")}>Value</TableHead>
+                <TableHead
+                  className={cn("text-[11px] font-semibold uppercase tracking-widest py-3", isDragDisabled && "pl-4")}
+                  style={{ color: "var(--text-muted)" }}
+                >
+                  Value
+                </TableHead>
               )}
-              <TableHead className="text-right w-[150px] font-semibold">Actions</TableHead>
+              <TableHead className="text-right text-[11px] font-semibold uppercase tracking-widest py-3 w-[120px]" style={{ color: "var(--text-muted)" }}>
+                Actions
+              </TableHead>
             </TableRow>
           </TableHeader>
+
           <TableBody>
             {itemsList.length === 0 ? (
               <TableRow>
-                <TableCell
-                  colSpan={isClasses ? (isDragDisabled ? 3 : 4) : (isDragDisabled ? 2 : 3)}
-                  className="h-32 text-center text-muted-foreground"
-                >
-                  <div className="flex flex-col items-center justify-center gap-1">
-                    <Search className="h-6 w-6 text-muted-foreground/50 mb-1" />
-                    <p>No items found.</p>
+                <TableCell colSpan={isClasses ? (isDragDisabled ? 3 : 4) : (isDragDisabled ? 2 : 3)}>
+                  <div className="flex flex-col items-center gap-3 py-12" style={{ color: "var(--text-muted)" }}>
+                    <LayoutList className="h-9 w-9 opacity-25" />
+                    <p className="text-[13px]">No items found. Try adjusting your search.</p>
                   </div>
                 </TableCell>
               </TableRow>
             ) : (
-              <DndContext 
-                sensors={sensors}
-                collisionDetection={closestCenter}
-                onDragEnd={handleDragEnd}
+              <SortableContext
+                items={itemsList.map((i) => i._id)}
+                strategy={verticalListSortingStrategy}
               >
-                <SortableContext 
-                  items={itemsList.map(i => i._id)}
-                  strategy={verticalListSortingStrategy}
-                >
-                  {itemsList.map((item) => (
-                    <SortableTableRow 
-                       key={item._id}
-                       item={item}
-                       isClasses={isClasses}
-                       onEdit={() => setEditItem(item)}
-                       onDelete={() => setDeleteItem(item)}
-                       isDragDisabled={isDragDisabled}
-                    />
-                  ))}
-                </SortableContext>
-              </DndContext>
+                {itemsList.map((item) => (
+                  <SortableTableRow
+                    key={item._id}
+                    item={item}
+                    isClasses={isClasses}
+                    onEdit={()   => setEditItem(item)}
+                    onDelete={() => setDeleteItem(item)}
+                    isDragDisabled={isDragDisabled}
+                  />
+                ))}
+              </SortableContext>
             )}
           </TableBody>
         </Table>
       </div>
+    </DndContext>
 
-      <EditDropdownDialog 
-        item={editItem} 
-        open={!!editItem} 
-        onOpenChange={(open) => !open && setEditItem(null)} 
+      {/* Dialogs */}
+      <EditDropdownDialog
+        item={editItem}
+        open={!!editItem}
+        onOpenChange={(open) => !open && setEditItem(null)}
       />
-      
-      <DeleteDropdownDialog 
-        item={deleteItem} 
-        open={!!deleteItem} 
-        onOpenChange={(open) => !open && setDeleteItem(null)} 
+      <DeleteDropdownDialog
+        item={deleteItem}
+        open={!!deleteItem}
+        onOpenChange={(open) => !open && setDeleteItem(null)}
       />
     </div>
   );

@@ -2,11 +2,13 @@ import { NextRequest } from "next/server";
 import ConnectDB from "@/config/db";
 import StockMovementModel from "@/models/stock-movements.model";
 import ItemModel from "@/models/items.model";
+import AuditLogModel, { AuditAction } from "@/models/auditLog.model";
 import { withErrorHandler, ApiError } from "@/lib/helpers/withErrorHandler";
+import { withTransaction } from "@/lib/helpers/withTransaction";
 import { getUserId } from "@/lib/auth/getUserId";
 import { createStockMovementSchema } from "@/utils/zod/stock-movement.schema";
 import { sanitizeSearch } from "@/lib/helpers/sanitize-search";
-import { QueryFilter } from "mongoose";
+import { QueryFilter, Types } from "mongoose";
 import { IStockMovement } from "@/models/stock-movements.model";
 import { STOCK_MOVEMENT_TYPE } from "@/const/stock.const";
 
@@ -67,23 +69,39 @@ export const POST = withErrorHandler(async (request: NextRequest) => {
   const body = await request.json();
   const parsedData = createStockMovementSchema.parse(body);
 
-  // Validate the item actually exists
-  const item = await ItemModel.findById(parsedData.itemId).lean();
-  if (!item) {
-    throw new ApiError("Item not found", 404);
-  }
+  return withTransaction(async (session) => {
+    // Validate the item actually exists
+    const item = await ItemModel.findById(parsedData.itemId).session(session).lean();
+    if (!item) {
+      throw new ApiError("Item not found", 404);
+    }
 
-  const movement = await StockMovementModel.create({
-    ...parsedData,
-    type: STOCK_MOVEMENT_TYPE.STOCK_OUT,
-    createdBy: userId,
+    const [movement] = await StockMovementModel.create([{
+      ...parsedData,
+      type: STOCK_MOVEMENT_TYPE.STOCK_OUT,
+      createdBy: userId,
+    }], { session });
+
+    await AuditLogModel.create([{
+      user: new Types.ObjectId(userId),
+      action: AuditAction.STOCK_DISPATCHED,
+      entityType: "StockMovement",
+      entityId: movement._id,
+      details: {
+        itemCode: parsedData.itemCode,
+        itemName: parsedData.itemName,
+        quantity: parsedData.quantity,
+        date: parsedData.date,
+        remarks: parsedData.remarks,
+      },
+    }], { session });
+
+    return {
+      data: {
+        success: true,
+        message: "Stock out recorded successfully",
+        movement,
+      },
+    };
   });
-
-  return {
-    data: {
-      success: true,
-      message: "Stock out recorded successfully",
-      movement,
-    },
-  };
 });

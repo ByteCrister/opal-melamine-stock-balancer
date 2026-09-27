@@ -7,9 +7,9 @@ export const GET = withErrorHandler(async () => {
   await getUserId(); // ensure authenticated
   await ConnectDB();
 
-  // Find all active items, projecting only _id, itemCode, and itemName
+  // Find all active items, projecting only _id, itemCode, itemName, and unit
   const items = await ItemModel.find({ deletedAt: null })
-    .select("_id itemCode itemName")
+    .select("_id itemCode itemName unit")
     .sort({ itemCode: 1 })
     .lean();
 

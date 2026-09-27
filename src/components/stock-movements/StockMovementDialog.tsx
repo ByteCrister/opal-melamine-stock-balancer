@@ -283,6 +283,7 @@ export function StockMovementDialog({
                                 form.setValue("itemId", item._id);
                                 form.setValue("itemCode", item.itemCode);
                                 form.setValue("itemName", item.itemName);
+                                form.setValue("unit", item.unit);
                                 setComboboxOpen(false);
                               }}
                             >
@@ -330,12 +331,13 @@ export function StockMovementDialog({
               <FieldError message={form.formState.errors.quantity?.message} />
             </div>
             <div className="grid gap-1.5">
-              <FieldLabel htmlFor="unit">Unit *</FieldLabel>
+              <FieldLabel htmlFor="unit">Unit</FieldLabel>
               <Input
                 id="unit"
-                placeholder="e.g. pcs, kg"
-                className="h-9 text-[13px]"
-                style={inputStyle}
+                readOnly
+                placeholder="Auto-filled from item"
+                className="h-9 text-[13px] cursor-default"
+                style={{ ...inputStyle, opacity: 0.7 }}
                 {...form.register("unit")}
               />
               <FieldError message={form.formState.errors.unit?.message} />

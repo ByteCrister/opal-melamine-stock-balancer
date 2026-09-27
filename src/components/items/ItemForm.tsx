@@ -65,14 +65,24 @@ export function ItemForm({ initialData }: ItemFormProps) {
 
   const form = useForm<CreateItemFormValues>({
     resolver: zodResolver(createItemSchema) as unknown as Resolver<CreateItemFormValues>,
-    mode: "onChange",
+    mode: "all",
     defaultValues: initialData || {
       itemCode: "", itemName: "", classCode: "", className: "",
       category: "", material: "", shape: "", size: "", color: "",
-      design: "", unit: "", reorderLevel: 0, dp: 0, tp: 0, mrp: 0,
-      doUnit: "", doQty: 0,
+      design: "", unit: "", reorderLevel: 0, dp: undefined, tp: undefined, mrp: undefined,
+      doUnit: "", doQty: undefined,
     },
   });
+
+  // Re-apply initialData values once dropdowns have loaded so that <select>
+  // options exist in the DOM when the values are set. Without this, the browser
+  // sees no matching option at first render and silently falls back to the empty
+  // placeholder, even though form.defaultValues is correct.
+  useEffect(() => {
+    if (initialData && dropdowns) {
+      form.reset(initialData);
+    }
+  }, [dropdowns, form, initialData]);
 
   const classCode = useWatch({
     control: form.control,

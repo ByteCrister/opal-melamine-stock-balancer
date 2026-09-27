@@ -1,18 +1,22 @@
 import { NextRequest } from "next/server";
+import { Types } from "mongoose";
 import ConnectDB from "@/config/db";
 import StockMovementModel from "@/models/stock-movements.model";
 import ItemModel from "@/models/items.model";
+import AuditLogModel, { AuditAction } from "@/models/auditLog.model";
 import { withErrorHandler, ApiError } from "@/lib/helpers/withErrorHandler";
+import { withTransaction } from "@/lib/helpers/withTransaction";
 import { getUserId } from "@/lib/auth/getUserId";
 import { updateStockMovementSchema } from "@/utils/zod/stock-movement.schema";
 import { STOCK_MOVEMENT_TYPE } from "@/const/stock.const";
 
-export const GET = withErrorHandler(async (request: NextRequest, { params }: { params: { id: string } }) => {
+export const GET = withErrorHandler(async (request: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
+  const { id } = await params;
   await getUserId();
   await ConnectDB();
 
   const movement = await StockMovementModel.findOne({
-    _id: params.id,
+    _id: id,
     type: STOCK_MOVEMENT_TYPE.STOCK_OUT,
     deletedAt: null,
   }).lean();
@@ -24,57 +28,101 @@ export const GET = withErrorHandler(async (request: NextRequest, { params }: { p
   return { data: { movement } };
 });
 
-export const PUT = withErrorHandler(async (request: NextRequest, { params }: { params: { id: string } }) => {
-  await getUserId();
+export const PUT = withErrorHandler(async (request: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
+  const { id } = await params;
+  const userId = await getUserId();
   await ConnectDB();
 
   const body = await request.json();
   const parsedData = updateStockMovementSchema.parse(body);
 
-  if (parsedData.itemId) {
-    const item = await ItemModel.findById(parsedData.itemId).lean();
-    if (!item) {
-      throw new ApiError("Item not found", 404);
+  return withTransaction(async (session) => {
+    if (parsedData.itemId) {
+      const item = await ItemModel.findById(parsedData.itemId).session(session).lean();
+      if (!item) {
+        throw new ApiError("Item not found", 404);
+      }
     }
-  }
 
-  const movement = await StockMovementModel.findOneAndUpdate(
-    { _id: params.id, type: STOCK_MOVEMENT_TYPE.STOCK_OUT, deletedAt: null },
-    { $set: parsedData },
-    { new: true }
-  ).lean();
+    const movement = await StockMovementModel.findOneAndUpdate(
+      { _id: id, type: STOCK_MOVEMENT_TYPE.STOCK_OUT, deletedAt: null },
+      { $set: parsedData },
+      { new: true, session }
+    ).lean();
 
-  if (!movement) {
-    throw new ApiError("Stock out not found", 404);
-  }
+    if (!movement) {
+      throw new ApiError("Stock out not found", 404);
+    }
 
-  return {
-    data: {
-      success: true,
-      message: "Stock out updated successfully",
-      movement,
-    },
-  };
+    await AuditLogModel.create(
+      [
+        {
+          user: new Types.ObjectId(userId),
+          action: AuditAction.STOCK_ADJUSTED,
+          entityType: "StockMovement",
+          entityId: new Types.ObjectId(id),
+          details: {
+            operation: "UPDATE",
+            type: STOCK_MOVEMENT_TYPE.STOCK_OUT,
+            itemCode: movement.itemCode,
+            itemName: movement.itemName,
+            changedFields: Object.keys(parsedData),
+          },
+        },
+      ],
+      { session }
+    );
+
+    return {
+      data: {
+        success: true,
+        message: "Stock out updated successfully",
+        movement,
+      },
+    };
+  });
 });
 
-export const DELETE = withErrorHandler(async (request: NextRequest, { params }: { params: { id: string } }) => {
-  await getUserId();
+export const DELETE = withErrorHandler(async (request: NextRequest, { params }: { params: Promise<{ id: string }> }) => {
+  const { id } = await params;
+  const userId = await getUserId();
   await ConnectDB();
 
-  const movement = await StockMovementModel.findOneAndUpdate(
-    { _id: params.id, type: STOCK_MOVEMENT_TYPE.STOCK_OUT, deletedAt: null },
-    { $set: { deletedAt: new Date() } },
-    { new: true }
-  ).lean();
+  return withTransaction(async (session) => {
+    const movement = await StockMovementModel.findOneAndUpdate(
+      { _id: id, type: STOCK_MOVEMENT_TYPE.STOCK_OUT, deletedAt: null },
+      { $set: { deletedAt: new Date() } },
+      { new: true, session }
+    ).lean();
 
-  if (!movement) {
-    throw new ApiError("Stock out not found", 404);
-  }
+    if (!movement) {
+      throw new ApiError("Stock out not found", 404);
+    }
 
-  return {
-    data: {
-      success: true,
-      message: "Stock out deleted successfully",
-    },
-  };
+    await AuditLogModel.create(
+      [
+        {
+          user: new Types.ObjectId(userId),
+          action: AuditAction.STOCK_REVERTED,
+          entityType: "StockMovement",
+          entityId: new Types.ObjectId(id),
+          details: {
+            operation: "DELETE",
+            type: STOCK_MOVEMENT_TYPE.STOCK_OUT,
+            itemCode: movement.itemCode,
+            itemName: movement.itemName,
+            softDeleted: true,
+          },
+        },
+      ],
+      { session }
+    );
+
+    return {
+      data: {
+        success: true,
+        message: "Stock out deleted successfully",
+      },
+    };
+  });
 });

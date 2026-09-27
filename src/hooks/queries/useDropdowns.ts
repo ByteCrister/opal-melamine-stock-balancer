@@ -8,8 +8,8 @@ export function useDropdowns() {
     queryKey: DROPDOWN_QUERY_KEYS.all,
     queryFn: async () => {
       try {
-        const response = await apiClient.get<DropdownList>("/v1/dropdowns");
-        return response.data;
+        const response = await apiClient.get<{ data: DropdownList }>("/v1/dropdowns");
+        return response.data.data;
       } catch (error) {
         throw new Error(getApiError(error));
       }

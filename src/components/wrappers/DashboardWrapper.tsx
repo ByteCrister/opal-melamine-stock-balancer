@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useUserStore } from "@/store/useUserStore";
 import { AppSidebar } from "@/components/sidebar/AppSidebar";
 import { usePathname } from "next/navigation";
-import { FadeIn } from "@/components/shared/motion";
+
 
 /**
  * DashboardWrapper — Sidebar & Main Content
@@ -37,7 +37,7 @@ export function DashboardWrapper({ children }: { children: React.ReactNode }) {
   if (!user) return null;
 
   return (
-    <div className="flex h-screen w-full overflow-hidden" style={{ background: "var(--surface-base)" }}>
+    <div className="flex h-screen w-full" style={{ background: "var(--surface-base)" }}>
       {/* ── Sidebar (desktop: static, mobile: drawer via prop) ── */}
       <AppSidebar mobileOpen={mobileOpen} onMobileClose={() => setMobileOpen(false)} />
 
@@ -54,7 +54,7 @@ export function DashboardWrapper({ children }: { children: React.ReactNode }) {
             boxShadow: "var(--sidebar-shadow)",
           }}
         >
-          <FadeIn className="flex items-center gap-3 w-full" delay={0.1}>
+          <div className="flex items-center gap-3 w-full">
           {/* Hamburger */}
           <button
             id="mobile-nav-toggle"
@@ -107,12 +107,12 @@ export function DashboardWrapper({ children }: { children: React.ReactNode }) {
               </span>
             </span>
           </div>
-          </FadeIn>
+          </div>
         </header>
 
         {/* Page content */}
         <main className="flex-1 overflow-y-auto overflow-x-hidden">
-          <div className="p-4 md:p-8">
+          <div className="p-4 md:px-6 md:py-6 lg:px-8 lg:py-6 max-w-[1400px] mx-auto w-full">
             {children}
           </div>
         </main>

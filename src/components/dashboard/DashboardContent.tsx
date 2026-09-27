@@ -125,20 +125,21 @@ export function DashboardContent() {
 
       {/* ── KPI Grid ────────────────────────────────────────────────── */}
       <StaggerContainer delay={0.1} className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-        <StaggerItem className="col-span-2 sm:col-span-1">
+        <StaggerItem className="col-span-2 sm:col-span-1 flex">
           <KPICard
             title="Stock Balance"
             value={kpis.stockBalance}
             change={kpis.balanceChange}
             icon={Scale}
             featured
+            className="h-full w-full"
           />
         </StaggerItem>
-        <StaggerItem><KPICard title="Total Products"   value={kpis.totalProducts}  subtitle={`${kpis.activeProducts} active`} icon={Package2} /></StaggerItem>
-        <StaggerItem><KPICard title="Active Products"  value={kpis.activeProducts}  icon={PackageCheck} /></StaggerItem>
-        <StaggerItem><KPICard title="Stock In"         value={kpis.totalStockIn}   change={kpis.stockInChange}  subtitle="this period" icon={ArrowDownToLine} /></StaggerItem>
-        <StaggerItem><KPICard title="Stock Out"        value={kpis.totalStockOut}  change={kpis.stockOutChange} subtitle="this period" icon={ArrowUpFromLine} /></StaggerItem>
-        <StaggerItem><KPICard title="Low Stock"        value={kpis.lowStockItems}  subtitle="items at risk"     icon={AlertTriangle} /></StaggerItem>
+        <StaggerItem className="flex"><KPICard title="Total Products"   value={kpis.totalProducts}  subtitle={`${kpis.activeProducts} active`} icon={Package2}        className="h-full w-full" /></StaggerItem>
+        <StaggerItem className="flex"><KPICard title="Active Products"  value={kpis.activeProducts}                                            icon={PackageCheck}     className="h-full w-full" /></StaggerItem>
+        <StaggerItem className="flex"><KPICard title="Stock In"         value={kpis.totalStockIn}   change={kpis.stockInChange}  subtitle="this period" icon={ArrowDownToLine} className="h-full w-full" /></StaggerItem>
+        <StaggerItem className="flex"><KPICard title="Stock Out"        value={kpis.totalStockOut}  change={kpis.stockOutChange} subtitle="this period" icon={ArrowUpFromLine} className="h-full w-full" /></StaggerItem>
+        <StaggerItem className="flex"><KPICard title="Low Stock"        value={kpis.lowStockItems}  subtitle="items at risk"                   icon={AlertTriangle}   className="h-full w-full" /></StaggerItem>
       </StaggerContainer>
 
       {/* ── Trend + Donut ───────────────────────────────────────────── */}

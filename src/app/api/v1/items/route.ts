@@ -1,8 +1,10 @@
 import { NextRequest } from "next/server";
-import { QueryFilter } from "mongoose";
+import { QueryFilter, Types } from "mongoose";
 import ConnectDB from "@/config/db";
 import ItemModel, { IItem } from "@/models/items.model";
+import AuditLogModel, { AuditAction } from "@/models/auditLog.model";
 import { withErrorHandler, ApiError } from "@/lib/helpers/withErrorHandler";
+import { withTransaction } from "@/lib/helpers/withTransaction";
 import { getUserId } from "@/lib/auth/getUserId";
 import { createItemSchema } from "@/utils/zod/item.schema";
 import { sanitizeSearch } from "@/lib/helpers/sanitize-search";
@@ -70,19 +72,39 @@ export const POST = withErrorHandler(async (request: NextRequest) => {
   const payload = await request.json();
   const data = createItemSchema.parse(payload);
 
-  const existingItem = await ItemModel.findOne({ itemCode: data.itemCode });
-  if (existingItem) {
-    throw new ApiError(`Item code "${data.itemCode}" already exists.`, 400);
-  }
+  return withTransaction(async (session) => {
+    const existingItem = await ItemModel.findOne({ itemCode: data.itemCode }).session(session);
+    if (existingItem) {
+      throw new ApiError(`Item code "${data.itemCode}" already exists.`, 400);
+    }
 
-  const newItem = new ItemModel({
-    ...data,
-    createdBy: userId,
+    const newItem = new ItemModel({
+      ...data,
+      createdBy: userId,
+    });
+
+    await newItem.save({ session });
+
+    await AuditLogModel.create(
+      [
+        {
+          user: new Types.ObjectId(userId),
+          action: AuditAction.ITEM_CREATED,
+          entityType: "Item",
+          entityId: newItem._id,
+          details: {
+            itemCode: newItem.itemCode,
+            itemName: newItem.itemName,
+            category: newItem.category,
+            classCode: newItem.classCode,
+          },
+        },
+      ],
+      { session }
+    );
+
+    return {
+      data: { success: true, message: "Item created successfully", item: newItem },
+    };
   });
-
-  await newItem.save();
-
-  return {
-    data: { success: true, message: "Item created successfully", item: newItem },
-  };
 });
