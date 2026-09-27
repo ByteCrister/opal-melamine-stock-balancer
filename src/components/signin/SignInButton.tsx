@@ -10,7 +10,7 @@ interface SignInButtonProps {
     children: React.ReactNode;
     onClick?: () => void;
     type?:    "button" | "submit";
-    variant?: "primary" | "ghost";
+    variant?: "primary" | "secondary";
     disabled?: boolean;
     loading?:  boolean;
     fullWidth?: boolean;
@@ -25,7 +25,7 @@ interface SignInButtonProps {
  * Button component — follows the v2 Glossy Premium SaaS design.
  * 
  * primary: Uses `.btn-primary` helper class (crimson gradient + glow).
- * ghost:   Uses standard Tailwind utility classes for secondary actions.
+ * secondary: Uses `.btn-secondary` helper class (graphite + hover glow).
  */
 export function SignInButton({
     children,
@@ -39,19 +39,9 @@ export function SignInButton({
 }: SignInButtonProps) {
     const isDisabled = disabled || loading;
 
-    const baseClasses = `
-        inline-flex items-center justify-center gap-2 h-10 px-5
-        rounded-full font-sans text-[14px] leading-none whitespace-nowrap select-none
-        transition-all duration-150 ease-[cubic-bezier(0.4,0,0.2,1)] cursor-pointer
-        disabled:opacity-60 disabled:cursor-not-allowed
-        ${fullWidth ? "w-full" : ""}
-    `;
+    const widthClass = fullWidth ? "w-full" : "";
 
-    // primary relies on the .btn-primary class defined in globals.css for its
-    // complex gloss/glow gradients. ghost uses standard utility classes.
-    const variantClasses = variant === "primary"
-        ? "btn-primary" 
-        : "bg-surface text-foreground border border-border hover:bg-background font-medium";
+    const variantClass = variant === "primary" ? "btn-primary" : "btn-secondary";
 
     return (
         <button
@@ -61,7 +51,7 @@ export function SignInButton({
             disabled={isDisabled}
             aria-disabled={isDisabled}
             aria-busy={loading}
-            className={`${baseClasses} ${variantClasses}`}
+            className={`${variantClass} ${widthClass}`.trim()}
         >
             {loading && (
                 <Loader2

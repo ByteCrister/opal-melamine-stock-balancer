@@ -212,7 +212,7 @@ export function SignInForm() {
             {/* ── Google button ─────────────────────────────────────────── */}
             <SignInButton
                 id="signin-google-btn"
-                variant="ghost"
+                variant="secondary"
                 loading={googlePending}
                 disabled={isLoading}
                 fullWidth

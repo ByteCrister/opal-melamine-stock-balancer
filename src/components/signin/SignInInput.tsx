@@ -68,14 +68,8 @@ export function SignInInput({
                     className={`
                         w-full h-10 px-3
                         ${type === "password" ? "pr-11" : ""}
-                        bg-background rounded-md
-                        font-body text-sm font-normal text-foreground
-                        outline-none transition-all duration-200 ease-in-out
                         disabled:opacity-55 disabled:cursor-not-allowed
-                        placeholder:text-muted
-                        border
-                        focus:ring-2 focus:border-primary focus:ring-primary/20
-                        ${error ? "border-status-danger focus:border-status-danger focus:ring-status-danger/20" : "border-border"}
+                        ${error ? "!border-status-danger !shadow-none" : ""}
                     `}
                 />
 

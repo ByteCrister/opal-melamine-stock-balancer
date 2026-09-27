@@ -44,7 +44,7 @@ function CustomTooltip({
         className="mb-2.5 font-semibold"
         style={{ fontSize: 11, color: "var(--text-muted)", letterSpacing: "0.04em", textTransform: "uppercase" }}
       >
-        {label ? format(parseISO(label), "MMM d, yyyy") : ""}
+        {label ? (() => { try { return format(parseISO(label), "MMM d, yyyy"); } catch { return label; } })() : ""}
       </p>
       {payload.map((p) => (
         <div key={p.name} className="flex items-center justify-between gap-8 mb-1">
@@ -144,7 +144,8 @@ export function StockTrendChart({ data }: StockTrendChartProps) {
           </defs>
           <CartesianGrid {...CHART_GRID_STYLE} vertical={false} />
           <XAxis
-            dataKey="displayDate"
+            dataKey="date"
+            tickFormatter={(val) => { try { return format(parseISO(val), "MMM d"); } catch { return val; } }}
             tick={CHART_TICK_STYLE}
             axisLine={false}
             tickLine={false}
