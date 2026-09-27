@@ -2,12 +2,18 @@
 import { Schema, model, models, Document, Types } from "mongoose";
 
 // ---------------------------------------------------------------------------
-// Sub-document interface
+// Sub-document interfaces
 // ---------------------------------------------------------------------------
 
 export interface IClassOption {
   code: string;      // e.g. RC2280010
   className: string; // e.g. OPAL Plate
+  deletedAt: Date | null;
+}
+
+export interface IDropdownItem {
+  value: string;
+  deletedAt: Date | null;
 }
 
 // ---------------------------------------------------------------------------
@@ -16,20 +22,16 @@ export interface IClassOption {
 
 export interface IDropdownList extends Document {
   classes:    IClassOption[];
-  units:      string[];
-  categories: string[];
-  materials:  string[];
-  shapes:     string[];
-  stockUnits: string[];
+  units:      IDropdownItem[];
+  categories: IDropdownItem[];
+  materials:  IDropdownItem[];
+  shapes:     IDropdownItem[];
+  stockUnits: IDropdownItem[];
 
   // Audit
-  /** Admin who created / last updated this list document */
   createdBy: Types.ObjectId;
 
-  // Soft delete (rare, but keeps the audit pattern consistent)
   deletedAt: Date | null;
-
-  // Timestamps
   createdAt: Date;
   updatedAt: Date;
 }
@@ -38,14 +40,31 @@ export interface IDropdownList extends Document {
 // Schema
 // ---------------------------------------------------------------------------
 
+const DropdownItemSchema = new Schema<IDropdownItem>(
+  {
+    value: { type: String, required: true },
+    deletedAt: { type: Date, default: null }
+  },
+  { _id: true }
+);
+
+const ClassOptionSchema = new Schema<IClassOption>(
+  {
+    code: { type: String, required: true },
+    className: { type: String, required: true },
+    deletedAt: { type: Date, default: null }
+  },
+  { _id: true }
+);
+
 const DropdownListSchema = new Schema<IDropdownList>(
   {
-    classes:    [{ code: String, className: String }],
-    units:      [String],
-    categories: [String],
-    materials:  [String],
-    shapes:     [String],
-    stockUnits: [String],
+    classes:    [ClassOptionSchema],
+    units:      [DropdownItemSchema],
+    categories: [DropdownItemSchema],
+    materials:  [DropdownItemSchema],
+    shapes:     [DropdownItemSchema],
+    stockUnits: [DropdownItemSchema],
 
     // Audit
     createdBy: { type: Schema.Types.ObjectId, ref: "User", required: true },
@@ -60,7 +79,6 @@ const DropdownListSchema = new Schema<IDropdownList>(
 // Indexes
 // ---------------------------------------------------------------------------
 
-/** Filter active list documents (the collection is usually a singleton, but still) */
 DropdownListSchema.index({ deletedAt: 1 });
 
 // ---------------------------------------------------------------------------

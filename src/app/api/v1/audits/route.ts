@@ -6,8 +6,7 @@ import { sanitizeSearch } from "@/lib/helpers/sanitize-search";
 import { getUserId } from "@/lib/auth/getUserId";
 
 export const GET = withErrorHandler(async (request: NextRequest) => {
-    // Must be authorized. Admin might see all, others might see only their own.
-    await getUserId();
+    const userId = await getUserId();
 
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get("page") || "1", 10);
@@ -17,7 +16,8 @@ export const GET = withErrorHandler(async (request: NextRequest) => {
     const sort = searchParams.get("sort") === "asc" ? 1 : -1;
     const sortBy = searchParams.get("sortBy") || "createdAt";
 
-    const query: { $or?: Array<Record<string, unknown>> } = {};
+    const query: Record<string, unknown> = { user: userId };
+    
     if (search) {
         query.$or = [
             { action: { $regex: search, $options: "i" } },
