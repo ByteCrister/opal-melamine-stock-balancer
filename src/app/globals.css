@@ -1,26 +1,276 @@
 @import "tailwindcss";
 
+/* ==========================================================================
+   Product Management Platform — Design System CSS Custom Properties
+   Source: DESIGN.md v2 (Glossy Premium SaaS)
+   ========================================================================== */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+    /* ---------------------------------------------------------------------- */
+    /* 1. Base Palette                                                        */
+    /* ---------------------------------------------------------------------- */
+
+    --color-graphite-950: #0A0B0D;
+    --color-graphite-900: #101215;
+    --color-graphite-800: #181B1F;
+    --color-graphite-700: #22262C;
+    --color-graphite-600: #2E333B;
+    --color-graphite-400: #565D68;
+    
+    --color-fog-200:      #9BA1AB;
+    --color-fog-050:      #E9EBEF;
+    --color-white:        #FFFFFF;
+
+    /* Signature Red (Accent System) */
+    --color-crimson-400:  #FF3B57;
+    --color-crimson-500:  #E31C3D;
+    --color-crimson-600:  #C41230;
+    --color-crimson-700:  #9C0E26;
+    --color-crimson-900:  #3D0A14;
+    --color-crimson-glow: rgba(227, 28, 61, 0.35);
+
+    /* Status Palette */
+    --color-status-success: #2FBF71;
+    --color-status-warning: #F5A623;
+    --color-status-danger:  #E31C3D;
+    --color-status-info:    #4C8DFF;
+    --color-status-neutral: #565D68;
+
+    /* ---------------------------------------------------------------------- */
+    /* 2. Gradients (The Glossy Layer)                                        */
+    /* ---------------------------------------------------------------------- */
+
+    --gradient-primary-button:       linear-gradient(180deg, #FF3B57 0%, #C41230 100%);
+    --gradient-primary-button-hover: linear-gradient(180deg, #FF5670 0%, #D6183A 100%);
+    --gradient-glass-surface:        linear-gradient(180deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.01) 100%);
+    --gradient-hero-glow:            radial-gradient(circle at 50% 0%, rgba(227,28,61,0.25), transparent 60%);
+    --gradient-metric-accent:        linear-gradient(135deg, #FF3B57 0%, #7A0F22 100%);
+    --gradient-border-sheen:         linear-gradient(135deg, rgba(255,255,255,0.14), rgba(255,255,255,0) 40%);
+
+    /* ---------------------------------------------------------------------- */
+    /* 3. Semantic Tokens                                                     */
+    /* ---------------------------------------------------------------------- */
+    
+    --surface-base:    var(--color-graphite-950);
+    --surface-raised:  var(--color-graphite-800); /* Note: composite with glass-surface gradient in UI */
+    --surface-overlay: var(--color-graphite-700);
+    
+    --text-primary:    var(--color-fog-050);
+    --text-secondary:  var(--color-fog-200);
+    --text-muted:      var(--color-graphite-400);
+    --text-on-primary: var(--color-white);
+    
+    --border-default:  var(--color-graphite-600);
+    --border-glass:    var(--gradient-border-sheen); /* Use via border-image */
+    --focus-ring:      var(--color-crimson-400);
+
+    /* ---------------------------------------------------------------------- */
+    /* 4. Typography Scale                                                    */
+    /* ---------------------------------------------------------------------- */
+
+    /* Font families injected via layout.tsx */
+    --font-geist:       var(--font-display), 'Geist', ui-sans-serif, system-ui, sans-serif;
+    --font-inter:       var(--font-body), 'Inter', ui-sans-serif, system-ui, sans-serif;
+    --font-geist-mono:  var(--font-mono), 'Geist Mono', ui-monospace, monospace;
+
+    /* Display */
+    --text-display-lg:      44px;
+    --leading-display-lg:   48px;
+    --text-display-md:      32px;
+    --leading-display-md:   38px;
+    
+    /* Heading */
+    --text-heading-lg:      22px;
+    --leading-heading-lg:   28px;
+    --text-heading-md:      17px;
+    --leading-heading-md:   24px;
+    
+    /* Body */
+    --text-body-lg:         15px;
+    --leading-body-lg:      22px;
+    --text-body-md:         13.5px;
+    --leading-body-md:      20px;
+    --text-body-sm:         12px;
+    --leading-body-sm:      16px;
+    
+    /* UI / Labels */
+    --text-label:           12.5px;
+    --leading-label:        16px;
+    
+    /* Metrics / Mono */
+    --text-metric-lg:       40px;
+    --leading-metric-lg:    44px;
+    --text-numeric:         13.5px;
+    --leading-numeric:      20px;
+    --text-code:            12.5px;
+    --leading-code:         18px;
+
+    /* Letter Spacing */
+    --tracking-tight: -0.02em;
+    --tracking-snug:  -0.01em;
+    --tracking-normal: 0em;
+    --tracking-wide:   0.01em;
+
+    /* ---------------------------------------------------------------------- */
+    /* 5. Spacing & Radius                                                    */
+    /* ---------------------------------------------------------------------- */
+    
+    --spacing-1:  4px;
+    --spacing-2:  8px;
+    --spacing-3:  12px;
+    --spacing-4:  16px;
+    --spacing-5:  20px;
+    --spacing-6:  24px;
+    --spacing-8:  32px;
+    --spacing-10: 40px;
+    --spacing-12: 48px;
+    --spacing-16: 64px;
+
+    --radius-sm:   6px;
+    --radius-md:   10px;
+    --radius-lg:   16px;
+    --radius-pill: 999px;
+
+    /* ---------------------------------------------------------------------- */
+    /* 6. Elevation & Glow                                                    */
+    /* ---------------------------------------------------------------------- */
+    
+    --elevation-0: none;
+    --elevation-1: 0 1px 2px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.04);
+    --elevation-2: 0 8px 24px rgba(0,0,0,0.5);
+    --elevation-3: 0 24px 64px rgba(0,0,0,0.6);
+
+    --glow-primary-cta:       0 0 0 1px rgba(227,28,61,0.4), 0 4px 20px rgba(227,28,61,0.35);
+    --glow-primary-cta-hover: 0 0 0 1px rgba(255,59,87,0.6), 0 6px 28px rgba(255,59,87,0.45);
+    --glow-active-nav:        inset 2px 0 0 #E31C3D, 0 0 16px rgba(227,28,61,0.2);
+
+    /* ---------------------------------------------------------------------- */
+    /* 7. Motion                                                              */
+    /* ---------------------------------------------------------------------- */
+    
+    --motion-fast:     100ms;
+    --motion-base:     180ms;
+    --motion-slow:     280ms;
+    --motion-ease-std: cubic-bezier(0.4, 0, 0.2, 1);
+    --motion-ease-emp: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+/* ==========================================================================
+   Light Mode Overrides (System Preference)
+   ========================================================================== */
+@media (prefers-color-scheme: light) {
+    :root {
+        --surface-base:    #F5F6F8;
+        --surface-raised:  #FFFFFF;
+        --surface-overlay: #FFFFFF;
+        
+        --text-primary:    #0F1115;
+        --text-secondary:  #5B616B;
+        --text-muted:      #8A919D;
+        
+        --border-default:  #E4E6EA;
+        
+        --elevation-1: 0 1px 2px rgba(0,0,0,0.05), inset 0 1px 0 rgba(0,0,0,0.04);
+        --elevation-2: 0 4px 12px rgba(0,0,0,0.08);
+        --elevation-3: 0 12px 32px rgba(0,0,0,0.12);
+        
+        --gradient-glass-surface: none;
+    }
+}
+
+/* ==========================================================================
+   Tailwind v4 theme extension
+   ========================================================================== */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+    --color-background: var(--surface-base);
+    --color-surface:    var(--surface-raised);
+    --color-foreground: var(--text-primary);
+    --color-muted:      var(--text-muted);
+    --color-secondary:  var(--text-secondary);
+    --color-border:     var(--border-default);
+    --color-primary:    var(--color-crimson-500);
+    
+    --font-sans:        var(--font-geist);
+    --font-body:        var(--font-inter);
+    --font-mono:        var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ==========================================================================
+   Base / Reset
+   ========================================================================== */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    background: var(--surface-base);
+    color: var(--text-primary);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+    margin: 0;
+    background: var(--surface-base);
+    color: var(--text-primary);
+    font-family: var(--font-inter);
+    font-size: var(--text-body-lg);
+    line-height: var(--leading-body-lg);
+    letter-spacing: var(--tracking-normal);
+}
+
+/* ==========================================================================
+   Typography helpers
+   ========================================================================== */
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-geist);
+    font-weight: 500;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+/* ==========================================================================
+   Focus / Accessibility
+   ========================================================================== */
+
+:focus-visible {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+}
+
+/* ==========================================================================
+   Premium Glass Components (Helper Classes)
+   ========================================================================== */
+
+/* The standard glossy card backplate */
+.glass-panel {
+    background-color: var(--surface-raised);
+    background-image: var(--gradient-glass-surface);
+    border: 1px solid var(--border-default); /* Can use border sheen for premium versions */
+    border-radius: var(--radius-md);
+    box-shadow: var(--elevation-1);
+}
+
+/* The glossy primary button */
+.btn-primary {
+    background-image: var(--gradient-primary-button);
+    color: var(--text-on-primary);
+    border-radius: var(--radius-pill);
+    box-shadow: var(--glow-primary-cta);
+    font-family: var(--font-geist);
+    font-weight: 600;
+    transition: all var(--motion-base) var(--motion-ease-std);
+    border: none;
+    outline: none;
+}
+
+.btn-primary:hover:not(:disabled) {
+    background-image: var(--gradient-primary-button-hover);
+    box-shadow: var(--glow-primary-cta-hover);
 }
