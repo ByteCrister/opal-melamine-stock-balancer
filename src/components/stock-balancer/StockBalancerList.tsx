@@ -95,9 +95,9 @@ export function StockBalancerList() {
       <StaggerContainer delay={0.05} className="grid grid-cols-2 sm:grid-cols-4 gap-4">
 
         {/* Total In */}
-        <StaggerItem>
+        <StaggerItem className="h-full">
           <div
-            className="relative overflow-hidden rounded-[var(--radius-lg)] p-4 flex items-center gap-3"
+            className="relative overflow-hidden rounded-[var(--radius-lg)] p-4 flex items-center gap-3 h-full"
             style={{
               background:      "var(--card-bg)",
               backgroundImage: "var(--card-bg-overlay)",
@@ -120,9 +120,9 @@ export function StockBalancerList() {
         </StaggerItem>
 
         {/* Total Out */}
-        <StaggerItem>
+        <StaggerItem className="h-full">
           <div
-            className="relative overflow-hidden rounded-[var(--radius-lg)] p-4 flex items-center gap-3"
+            className="relative overflow-hidden rounded-[var(--radius-lg)] p-4 flex items-center gap-3 h-full"
             style={{
               background:      "var(--card-bg)",
               backgroundImage: "var(--card-bg-overlay)",
@@ -145,9 +145,9 @@ export function StockBalancerList() {
         </StaggerItem>
 
         {/* Low Stock */}
-        <StaggerItem>
+        <StaggerItem className="h-full">
           <div
-            className="relative overflow-hidden rounded-[var(--radius-lg)] p-4 flex items-center gap-3"
+            className="relative overflow-hidden rounded-[var(--radius-lg)] p-4 flex items-center gap-3 h-full"
             style={{
               background:      "var(--card-bg)",
               backgroundImage: "var(--card-bg-overlay)",
@@ -171,9 +171,9 @@ export function StockBalancerList() {
         </StaggerItem>
 
         {/* Overdrawn */}
-        <StaggerItem>
+        <StaggerItem className="h-full">
           <div
-            className="relative overflow-hidden rounded-[var(--radius-lg)] p-4 flex items-center gap-3"
+            className="relative overflow-hidden rounded-[var(--radius-lg)] p-4 flex items-center gap-3 h-full"
             style={{
               background:      "var(--card-bg)",
               backgroundImage: "var(--card-bg-overlay)",

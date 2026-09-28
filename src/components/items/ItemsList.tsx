@@ -107,9 +107,9 @@ export function ItemsList() {
       {/* ── KPI Cards ───────────────────────────────────────────────── */}
       <StaggerContainer delay={0.1} className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {/* Total Items */}
-        <StaggerItem>
+        <StaggerItem className="h-full">
           <div
-            className="relative overflow-hidden rounded-[var(--radius-lg)] p-5 flex items-center gap-4"
+            className="relative overflow-hidden rounded-[var(--radius-lg)] p-5 flex items-center gap-4 h-full"
             style={{
               background: "var(--card-bg)",
               backgroundImage: "var(--card-bg-overlay)",
@@ -134,9 +134,9 @@ export function ItemsList() {
         </StaggerItem>
 
         {/* Low Stock Alerts */}
-        <StaggerItem>
+        <StaggerItem className="h-full">
           <div
-            className="relative overflow-hidden rounded-[var(--radius-lg)] p-5 flex items-center gap-4"
+            className="relative overflow-hidden rounded-[var(--radius-lg)] p-5 flex items-center gap-4 h-full"
             style={{
               background: "var(--card-bg)",
               backgroundImage: "var(--card-bg-overlay)",
@@ -161,9 +161,9 @@ export function ItemsList() {
         </StaggerItem>
 
         {/* Current Page */}
-        <StaggerItem>
+        <StaggerItem className="h-full">
           <div
-            className="relative overflow-hidden rounded-[var(--radius-lg)] p-5 flex items-center gap-4"
+            className="relative overflow-hidden rounded-[var(--radius-lg)] p-5 flex items-center gap-4 h-full"
             style={{
               background: "var(--card-bg)",
               backgroundImage: "var(--card-bg-overlay)",

@@ -4,7 +4,7 @@ import { useDropdownStore } from "@/store/useDropdownStore";
 import { DropdownTypeSelector } from "./DropdownTypeSelector";
 import { DropdownListTable } from "./DropdownListTable";
 import { useDropdowns } from "@/hooks/queries/useDropdowns";
-import { AlertCircle, LayoutList } from "lucide-react";
+import { AlertCircle, LayoutList, Tag, Ruler, Layers, Box, Shapes, Boxes } from "lucide-react";
 import { AddDropdownDialog } from "./AddDropdownDialog";
 import { FadeInUp, StaggerContainer, StaggerItem } from "@/components/shared/motion";
 import { SharedBreadcrumb } from "@/components/shared/SharedBreadcrumb";
@@ -17,6 +17,15 @@ const TAB_LABELS: Record<string, string> = {
   materials:  "Materials",
   shapes:     "Shapes",
   stockUnits: "Stock Units",
+};
+
+const TAB_ICONS: Record<string, React.ElementType> = {
+  classes:    Tag,
+  units:      Ruler,
+  categories: Layers,
+  materials:  Box,
+  shapes:     Shapes,
+  stockUnits: Boxes,
 };
 
 export function DropdownsPage() {
@@ -85,11 +94,12 @@ export function DropdownsPage() {
         {Object.entries(TAB_LABELS).map(([key, label]) => {
           const count = data ? (data[key as keyof typeof data] as { deletedAt: string | null }[] | undefined ?? []).filter(i => !i.deletedAt).length : 0;
           const isActive = key === activeTab;
+          const Icon = TAB_ICONS[key];
           return (
-            <StaggerItem key={key}>
+            <StaggerItem key={key} className="h-full">
               <button
                 onClick={() => useDropdownStore.getState().setActiveTab(key as import("@/types/dropdown.types").DropdownType)}
-                className="relative overflow-hidden w-full rounded-[var(--radius-lg)] p-3 flex flex-col gap-1 text-left transition-all duration-150"
+                className="relative overflow-hidden w-full h-full rounded-[var(--radius-lg)] p-3 flex flex-col gap-1.5 text-left transition-all duration-150"
                 style={{
                   background:      isActive ? "var(--tab-active-bg)"  : "var(--card-bg)",
                   backgroundImage: isActive ? undefined               : "var(--card-bg-overlay)",
@@ -100,12 +110,15 @@ export function DropdownsPage() {
                 {isActive && (
                   <div aria-hidden className="pointer-events-none absolute -top-4 -right-4 h-16 w-16 rounded-full blur-2xl" style={{ background: "rgba(227,28,61,0.15)" }} />
                 )}
-                <span
-                  className="text-[10px] font-semibold uppercase tracking-widest truncate"
-                  style={{ color: isActive ? "var(--color-crimson-400)" : "var(--text-muted)" }}
-                >
-                  {label}
-                </span>
+                <div className="flex items-center gap-1.5 min-w-0">
+                  <Icon className="h-3.5 w-3.5 shrink-0" style={{ color: isActive ? "var(--color-crimson-400)" : "var(--text-muted)" }} />
+                  <span
+                    className="text-[10px] font-semibold uppercase tracking-widest truncate"
+                    style={{ color: isActive ? "var(--color-crimson-400)" : "var(--text-muted)" }}
+                  >
+                    {label}
+                  </span>
+                </div>
                 <span
                   className="text-xl font-bold leading-tight"
                   style={{ color: "var(--text-primary)", fontFamily: "var(--font-geist)" }}

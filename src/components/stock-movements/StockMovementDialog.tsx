@@ -252,7 +252,7 @@ export function StockMovementDialog({
                     <ChevronsUpDown className="ml-2 h-3.5 w-3.5 shrink-0 opacity-50" />
                   </PopoverTrigger>
                   <PopoverContent
-                    className="w-[470px] p-0"
+                    className="w-[var(--radix-popover-trigger-width)] p-0"
                     style={{
                       background: "var(--dialog-bg)",
                       border: "1px solid var(--card-border)",
@@ -278,7 +278,7 @@ export function StockMovementDialog({
                             <CommandItem
                               key={item._id}
                               value={`${item.itemCode} ${item.itemName}`}
-                              className="text-[13px] cursor-pointer"
+                              className="flex items-center gap-3 py-2.5 px-3 cursor-pointer group rounded-[8px] my-0.5 mx-1"
                               onSelect={() => {
                                 form.setValue("itemId", item._id);
                                 form.setValue("itemCode", item.itemCode);
@@ -287,23 +287,34 @@ export function StockMovementDialog({
                                 setComboboxOpen(false);
                               }}
                             >
+                              <div className="flex items-center gap-3 flex-1 min-w-0">
+                                <span
+                                  className="shrink-0 inline-flex items-center px-2.5 py-0.5 rounded-md text-[11px] font-bold uppercase tracking-wider transition-colors"
+                                  style={{
+                                    background: field.value === item._id ? accentBg : "var(--badge-neutral-bg)",
+                                    color: field.value === item._id ? accentColor : "var(--badge-neutral-text)",
+                                    border: `1px solid ${field.value === item._id ? accentBorder : "var(--badge-neutral-border)"}`,
+                                  }}
+                                >
+                                  {item.itemCode}
+                                </span>
+                                <span 
+                                  className="truncate font-medium transition-colors"
+                                  style={{ 
+                                    color: field.value === item._id ? "var(--text-primary)" : "var(--text-secondary)",
+                                    fontSize: "13.5px"
+                                  }}
+                                >
+                                  {item.itemName}
+                                </span>
+                              </div>
                               <Check
                                 className={cn(
-                                  "mr-2 h-3.5 w-3.5",
-                                  field.value === item._id ? "opacity-100" : "opacity-0"
+                                  "shrink-0 h-4 w-4 transition-all duration-200",
+                                  field.value === item._id ? "opacity-100 scale-100" : "opacity-0 scale-75"
                                 )}
                                 style={{ color: accentColor }}
                               />
-                              <span
-                                className="font-semibold mr-1.5 text-[11px] px-1.5 py-0.5 rounded"
-                                style={{
-                                  background: "var(--badge-neutral-bg)",
-                                  color: "var(--badge-neutral-text)",
-                                }}
-                              >
-                                {item.itemCode}
-                              </span>
-                              <span style={{ color: "var(--text-secondary)" }}>{item.itemName}</span>
                             </CommandItem>
                           ))}
                         </CommandGroup>

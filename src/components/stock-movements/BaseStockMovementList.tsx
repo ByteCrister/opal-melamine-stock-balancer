@@ -122,9 +122,9 @@ export function BaseStockMovementList({ type }: BaseStockMovementListProps) {
       <StaggerContainer delay={0.05} className="grid grid-cols-1 sm:grid-cols-3 gap-4">
 
         {/* Total Records */}
-        <StaggerItem>
+        <StaggerItem className="h-full">
           <div
-            className="relative overflow-hidden rounded-[var(--radius-lg)] p-5 flex items-center gap-4"
+            className="relative overflow-hidden rounded-[var(--radius-lg)] p-5 flex items-center gap-4 h-full"
             style={{
               background: "var(--card-bg)",
               backgroundImage: "var(--card-bg-overlay)",
@@ -161,9 +161,9 @@ export function BaseStockMovementList({ type }: BaseStockMovementListProps) {
         </StaggerItem>
 
         {/* This Page */}
-        <StaggerItem>
+        <StaggerItem className="h-full">
           <div
-            className="relative overflow-hidden rounded-[var(--radius-lg)] p-5 flex items-center gap-4"
+            className="relative overflow-hidden rounded-[var(--radius-lg)] p-5 flex items-center gap-4 h-full"
             style={{
               background: "var(--card-bg)",
               backgroundImage: "var(--card-bg-overlay)",
@@ -200,9 +200,9 @@ export function BaseStockMovementList({ type }: BaseStockMovementListProps) {
         </StaggerItem>
 
         {/* Latest Date */}
-        <StaggerItem>
+        <StaggerItem className="h-full">
           <div
-            className="relative overflow-hidden rounded-[var(--radius-lg)] p-5 flex items-center gap-4"
+            className="relative overflow-hidden rounded-[var(--radius-lg)] p-5 flex items-center gap-4 h-full"
             style={{
               background: "var(--card-bg)",
               backgroundImage: "var(--card-bg-overlay)",
