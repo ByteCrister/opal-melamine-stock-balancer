@@ -84,7 +84,7 @@ export function KPICard({ title, value, subtitle, change, icon: Icon, featured =
             textShadow: "0 1px 8px rgba(0,0,0,0.25)",
           }}
         >
-          {typeof value === "number" ? value.toLocaleString() : value}
+          {typeof value === "number" ? Intl.NumberFormat('en-US', { notation: 'compact', maximumFractionDigits: 1 }).format(value) : value}
         </p>
 
         <div className="flex items-center gap-2 flex-wrap">
@@ -165,7 +165,7 @@ export function KPICard({ title, value, subtitle, change, icon: Icon, featured =
           letterSpacing: "var(--tracking-tight)",
         }}
       >
-        {typeof value === "number" ? value.toLocaleString() : value}
+        {typeof value === "number" ? Intl.NumberFormat('en-US', { notation: 'compact', maximumFractionDigits: 1 }).format(value) : value}
       </p>
 
       <div className="flex items-center gap-2 flex-wrap">
