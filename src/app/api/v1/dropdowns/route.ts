@@ -10,22 +10,27 @@ import { getUserId } from "@/lib/auth/getUserId";
 import { Types, ClientSession } from "mongoose";
 import { DropdownType } from "@/types/dropdown.types";
 
-// Helper to get or create the singleton DropdownList document
+// Helper to get or create the singleton DropdownList document.
+// Uses findOneAndUpdate+upsert (atomic) to avoid a TOCTOU race where two
+// concurrent cold-start requests both see no document and both try to insert.
 async function getSingleton(userId: Types.ObjectId | string, session?: ClientSession) {
-  let doc = await DropdownListModel.findOne().session(session || null);
-  if (!doc) {
-    const newDoc = new DropdownListModel({
-      classes: [],
-      units: [],
-      categories: [],
-      materials: [],
-      shapes: [],
-      stockUnits: [],
-      createdBy: userId,
-    });
-    doc = await newDoc.save({ session });
-  }
-  return doc;
+  const doc = await DropdownListModel.findOneAndUpdate(
+    {},
+    {
+      $setOnInsert: {
+        classes:    [],
+        units:      [],
+        categories: [],
+        materials:  [],
+        shapes:     [],
+        stockUnits: [],
+        createdBy:  userId,
+        deletedAt:  null,
+      },
+    },
+    { upsert: true, new: true, session: session ?? undefined }
+  );
+  return doc!;
 }
 
 export const GET = withErrorHandler(async () => {
@@ -164,19 +169,7 @@ export const PUT = withErrorHandler(async (request: NextRequest) => {
         itemId,
         before: { code: oldCode, className: oldClassName },
         after: { code, className },
-        cascadeUpdated: oldCode !== code,
       };
-
-      // Cascade update items
-      if (oldCode !== code) {
-        await ItemModel.updateMany(
-          { classCode: oldCode },
-          { classCode: code, className },
-          { session }
-        );
-      } else {
-        await ItemModel.updateMany({ classCode: oldCode }, { className }, { session });
-      }
     } else {
       if (!value) throw new Error("Value is required");
 
@@ -203,29 +196,6 @@ export const PUT = withErrorHandler(async (request: NextRequest) => {
         before: { value: oldValue },
         after: { value },
       };
-
-      // Cascade update items
-      const fieldMap: Record<DropdownType, string | null> = {
-        classes: null,
-        units: "unit",
-        categories: "category",
-        materials: "material",
-        shapes: "shape",
-        stockUnits: "doUnit",
-      };
-      const itemField = fieldMap[type];
-
-      if (oldValue !== value && itemField) {
-        await ItemModel.updateMany({ [itemField]: oldValue }, { [itemField]: value }, { session });
-        
-        // If it's a unit, also cascade update the denormalized unit in Stock Movements
-        if (type === "units") {
-          await StockMovementModel.updateMany({ unit: oldValue }, { unit: value }, { session });
-        }
-
-        auditDetails.cascadeField = itemField;
-        auditDetails.cascadeUpdated = true;
-      }
     }
 
     await doc.save({ session });
@@ -280,23 +250,23 @@ export const DELETE = withErrorHandler(async (request: NextRequest) => {
     // Check if in use before deleting
     let isUsed = false;
     if (type === "classes") {
-      const exists = await ItemModel.exists({ classCode: target.code, deletedAt: null }).session(
+      const exists = await ItemModel.exists({ classId: target._id, deletedAt: null }).session(
         session
       );
       isUsed = !!exists;
     } else {
       const fieldMap: Record<DropdownType, string | null> = {
         classes: null,
-        units: "unit",
-        categories: "category",
-        materials: "material",
-        shapes: "shape",
-        stockUnits: "doUnit",
+        units: "unitId",
+        categories: "categoryId",
+        materials: "materialId",
+        shapes: "shapeId",
+        stockUnits: "doUnitId",
       };
       const itemField = fieldMap[type];
       if (itemField) {
         const exists = await ItemModel.exists({
-          [itemField]: target.value,
+          [itemField]: target._id,
           deletedAt: null,
         }).session(session);
         isUsed = !!exists;

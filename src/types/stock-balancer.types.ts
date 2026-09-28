@@ -1,12 +1,9 @@
-import { IItem } from "@/models/items.model";
+import { Item } from "@/types/item.types";
 
-export interface StockBalance extends Omit<IItem, "_id" | "createdAt" | "updatedAt" | "deletedAt" | "createdBy"> {
-  _id: string;
+export interface StockBalance extends Item {
   totalIn: number;
   totalOut: number;
   balance: number;
-  createdAt: string;
-  updatedAt: string;
 }
 
 export interface StockBalancerResponse {

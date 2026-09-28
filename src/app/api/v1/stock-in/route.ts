@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import ConnectDB from "@/config/db";
 import StockMovementModel from "@/models/stock-movements.model";
 import ItemModel from "@/models/items.model";
+import DropdownListModel from "@/models/dropdown-list.model";
 import AuditLogModel, { AuditAction } from "@/models/auditLog.model";
 import { withErrorHandler, ApiError } from "@/lib/helpers/withErrorHandler";
 import { withTransaction } from "@/lib/helpers/withTransaction";
@@ -29,10 +30,14 @@ export const GET = withErrorHandler(async (request: NextRequest) => {
   };
 
   if (search) {
-    query.$or = [
-      { itemCode: { $regex: search, $options: "i" } },
-      { itemName: { $regex: search, $options: "i" } },
-    ];
+    const matchedItems = await ItemModel.find({
+      $or: [
+        { itemCode: { $regex: search, $options: "i" } },
+        { itemName: { $regex: search, $options: "i" } },
+      ]
+    }).select("_id").lean();
+    
+    query.itemId = { $in: matchedItems.map(item => item._id as Types.ObjectId) };
   }
 
   const skip = (page - 1) * limit;
@@ -40,14 +45,27 @@ export const GET = withErrorHandler(async (request: NextRequest) => {
   const sortOptions: Record<string, 1 | -1> = {};
   sortOptions[sortBy] = sort === "asc" ? 1 : -1;
 
-  const [items, total] = await Promise.all([
+  const [rawItems, total, dropdowns] = await Promise.all([
     StockMovementModel.find(query)
       .sort(sortOptions)
       .skip(skip)
       .limit(limit)
+      .populate("itemId")
       .lean(),
     StockMovementModel.countDocuments(query),
+    DropdownListModel.findOne().lean(),
   ]);
+
+  const items = rawItems.map(m => {
+    const item = m.itemId as any;
+    return {
+      ...m,
+      itemId: item?._id?.toString() || m.itemId,
+      itemCode: item?.itemCode || "—",
+      itemName: item?.itemName || "—",
+      unit: dropdowns?.units?.find((u: any) => u._id.toString() === item?.unitId?.toString())?.value || "—",
+    };
+  });
 
   return {
     data: {

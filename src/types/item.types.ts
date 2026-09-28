@@ -2,20 +2,25 @@ export interface Item {
   _id: string;
   itemCode: string;
   itemName: string;
-  classCode?: string;
+  classId?: string;
   className?: string;
-  category: string;
-  material?: string;
-  shape?: string;
+  categoryId: string;
+  categoryName?: string;
+  materialId?: string;
+  materialName?: string;
+  shapeId?: string;
+  shapeName?: string;
   size?: string;
   color?: string;
   design?: string;
-  unit: string;
+  unitId: string;
+  unitName?: string;
   reorderLevel: number;
   dp?: number;
   tp?: number;
   mrp?: number;
-  doUnit?: string;
+  doUnitId?: string;
+  doUnitName?: string;
   doQty?: number;
   
   createdBy: string;
@@ -37,7 +42,7 @@ export interface ItemsResponse {
 export interface ItemFilters {
   search?: string;
   category?: string;
-  classCode?: string;
+  class?: string;
   material?: string;
   page?: number;
   limit?: number;

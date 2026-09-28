@@ -6,12 +6,14 @@ import { Schema, model, models, Document, Types } from "mongoose";
 // ---------------------------------------------------------------------------
 
 export interface IClassOption {
+  _id: Types.ObjectId;
   code: string;      // e.g. RC2280010
   className: string; // e.g. OPAL Plate
   deletedAt: Date | null;
 }
 
 export interface IDropdownItem {
+  _id: Types.ObjectId;
   value: string;
   deletedAt: Date | null;
 }

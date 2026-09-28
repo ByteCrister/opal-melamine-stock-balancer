@@ -12,11 +12,8 @@ import { Schema, model, models, Document, Types } from "mongoose";
 
 export interface IStockMovement extends Document {
   date:      Date;
-  itemCode:  string;
   itemId:    Types.ObjectId;   // ref → Item
-  itemName:  string;
   quantity:  number;
-  unit:      string;
   type:      StockMovementType;
   remarks?:  string;
 
@@ -43,11 +40,8 @@ export interface IStockMovement extends Document {
 const StockMovementSchema = new Schema<IStockMovement>(
   {
     date:     { type: Date, required: true },
-    itemCode: { type: String, required: true, trim: true, uppercase: true },
     itemId:   { type: Schema.Types.ObjectId, ref: "Item", required: true },
-    itemName: { type: String, trim: true },
     quantity: { type: Number, required: true, min: 0 },
-    unit:     { type: String, trim: true },
     type:     { type: String, enum: [STOCK_MOVEMENT_TYPE.STOCK_IN, STOCK_MOVEMENT_TYPE.STOCK_OUT], required: true },
     remarks:  { type: String, trim: true },
 
@@ -66,10 +60,10 @@ const StockMovementSchema = new Schema<IStockMovement>(
 
 /**
  * Most common query: stock ledger for a single item, newest first.
- * Covers:  StockMovement.find({ itemCode, deletedAt: null }).sort({ date: -1 })
+ * Covers:  StockMovement.find({ itemId, deletedAt: null }).sort({ date: -1 })
  */
 StockMovementSchema.index(
-  { itemCode: 1, deletedAt: 1, date: -1 },
+  { itemId: 1, deletedAt: 1, date: -1 },
   { name: "idx_item_ledger" }
 );
 

@@ -7,7 +7,7 @@ interface UseStockBalancerOptions {
   limit: number;
   search?: string;
   category?: string;
-  classCode?: string;
+  class?: string;
   material?: string;
 }
 
@@ -16,19 +16,19 @@ export function useStockBalancer({
   limit,
   search,
   category,
-  classCode,
+  class: cls,
   material,
 }: UseStockBalancerOptions) {
   return useQuery({
-    queryKey: ["stock-balancer", page, limit, search, category, classCode, material],
+    queryKey: ["stock-balancer", page, limit, search, category, cls, material],
     queryFn: async () => {
       const params = new URLSearchParams({
         page: page.toString(),
         limit: limit.toString(),
       });
-      if (search) params.append("search", search);
+      if (search)   params.append("search",   search);
       if (category) params.append("category", category);
-      if (classCode) params.append("classCode", classCode);
+      if (cls)      params.append("class",    cls);
       if (material) params.append("material", material);
 
       const response = await apiClient.get<{ data: StockBalancerResponse }>(

@@ -314,11 +314,11 @@ export function ItemsList() {
                         className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold"
                         style={{ background: "var(--badge-info-bg)", color: "var(--badge-info-text)", border: "1px solid var(--badge-info-border)" }}
                       >
-                        {item.category}
+                        {item.categoryName || "—"}
                       </span>
                     </TableCell>
                     <TableCell className="py-3 text-[13px]" style={{ color: "var(--text-secondary)" }}>
-                      {item.unit}
+                      {item.unitName || "—"}
                     </TableCell>
                     <TableCell className="py-3 text-right">
                       <div className="flex justify-end gap-1.5 opacity-100 md:opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity duration-150">

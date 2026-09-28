@@ -15,15 +15,23 @@ export const GET = withErrorHandler(async (request: NextRequest, { params }: { p
   await getUserId();
   await ConnectDB();
 
-  const movement = await StockMovementModel.findOne({
+  const movementRaw = await StockMovementModel.findOne({
     _id: id,
     type: STOCK_MOVEMENT_TYPE.STOCK_OUT,
     deletedAt: null,
-  }).lean();
+  }).populate("itemId").lean();
 
-  if (!movement) {
+  if (!movementRaw) {
     throw new ApiError("Stock out not found", 404);
   }
+
+  const item = movementRaw.itemId as any;
+  const movement = {
+    ...movementRaw,
+    itemId: item?._id?.toString() || movementRaw.itemId,
+    itemCode: item?.itemCode || "—",
+    itemName: item?.itemName || "—",
+  };
 
   return { data: { movement } };
 });
@@ -54,6 +62,8 @@ export const PUT = withErrorHandler(async (request: NextRequest, { params }: { p
       throw new ApiError("Stock out not found", 404);
     }
 
+    const itemRecord = await ItemModel.findById(movement.itemId).session(session).lean();
+
     await AuditLogModel.create(
       [
         {
@@ -64,8 +74,8 @@ export const PUT = withErrorHandler(async (request: NextRequest, { params }: { p
           details: {
             operation: "UPDATE",
             type: STOCK_MOVEMENT_TYPE.STOCK_OUT,
-            itemCode: movement.itemCode,
-            itemName: movement.itemName,
+            itemCode: itemRecord?.itemCode || "—",
+            itemName: itemRecord?.itemName || "—",
             changedFields: Object.keys(parsedData),
           },
         },
@@ -99,6 +109,8 @@ export const DELETE = withErrorHandler(async (request: NextRequest, { params }: 
       throw new ApiError("Stock out not found", 404);
     }
 
+    const itemRecord = await ItemModel.findById(movement.itemId).session(session).lean();
+
     await AuditLogModel.create(
       [
         {
@@ -109,8 +121,8 @@ export const DELETE = withErrorHandler(async (request: NextRequest, { params }: 
           details: {
             operation: "DELETE",
             type: STOCK_MOVEMENT_TYPE.STOCK_OUT,
-            itemCode: movement.itemCode,
-            itemName: movement.itemName,
+            itemCode: itemRecord?.itemCode || "—",
+            itemName: itemRecord?.itemName || "—",
             softDeleted: true,
           },
         },

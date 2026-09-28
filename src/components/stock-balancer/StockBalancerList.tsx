@@ -36,6 +36,7 @@ export function StockBalancerList() {
     search: debouncedSearch,
   });
 
+
   const handlePageChange = (newPage: number) => setPage(newPage);
 
   /* ── Derived stats ─────────────────────────────────────────────── */
@@ -345,7 +346,7 @@ export function StockBalancerList() {
                             border:     "1px solid var(--badge-info-border)",
                           }}
                         >
-                          {item.category || "—"}
+                          {item.categoryName || "—"}
                         </span>
                       </TableCell>
 

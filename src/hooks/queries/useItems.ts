@@ -12,12 +12,12 @@ export function useItems(filters: ItemFilters) {
         const params = new URLSearchParams();
         if (filters.page) params.append("page", filters.page.toString());
         if (filters.limit) params.append("limit", filters.limit.toString());
-        if (filters.search) params.append("search", filters.search);
-        if (filters.category) params.append("category", filters.category);
-        if (filters.classCode) params.append("classCode", filters.classCode);
-        if (filters.material) params.append("material", filters.material);
-        if (filters.sort) params.append("sort", filters.sort);
-        if (filters.sortBy) params.append("sortBy", filters.sortBy);
+        if (filters.search)   params.append("search",   filters.search);
+        if (filters.category)  params.append("category", filters.category);
+        if (filters["class"])  params.append("class",    filters["class"]!);
+        if (filters.material)  params.append("material", filters.material);
+        if (filters.sort)      params.append("sort",     filters.sort);
+        if (filters.sortBy)    params.append("sortBy",   filters.sortBy);
 
         const response = await apiClient.get<{ data: ItemsResponse }>(`${API_URL}?${params.toString()}`);
         return response.data.data;
@@ -47,6 +47,9 @@ export interface ActiveItemOption {
   _id: string;
   itemCode: string;
   itemName: string;
+  /** ObjectId string referencing the DropdownList unit sub-document */
+  unitId: string;
+  /** Resolved label (e.g. "PCS", "KG") — auto-filled into the form Unit field */
   unit: string;
 }
 

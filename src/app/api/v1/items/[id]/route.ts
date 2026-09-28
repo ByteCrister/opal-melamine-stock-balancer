@@ -20,14 +20,63 @@ export const GET = withErrorHandler(async (request: NextRequest, { params }: Rou
   await getUserId();
   await ConnectDB();
 
-  const item = await ItemModel.findOne({ _id: id, deletedAt: null }).lean();
-  if (!item) {
-    throw new ApiError("Item not found", 404);
-  }
+  if (!Types.ObjectId.isValid(id)) throw new ApiError("Invalid item ID", 400);
 
-  return {
-    data: { item },
-  };
+  const [item] = await ItemModel.aggregate([
+    { $match: { _id: new Types.ObjectId(id), deletedAt: null } },
+
+    // Join the single DropdownList document
+    { $lookup: { from: "dropdownlists", pipeline: [{ $limit: 1 }], as: "dl" } },
+    { $unwind: { path: "$dl", preserveNullAndEmptyArrays: true } },
+
+    // Resolve all labels in one $addFields pass
+    {
+      $addFields: {
+        className:    {
+          $let: {
+            vars: { m: { $arrayElemAt: [{ $filter: { input: { $ifNull: ["$dl.classes",     []] }, as: "el", cond: { $eq: ["$$el._id", "$classId"]    } } }, 0] } },
+            in: { $ifNull: ["$$m.className", "—"] },
+          },
+        },
+        categoryName: {
+          $let: {
+            vars: { m: { $arrayElemAt: [{ $filter: { input: { $ifNull: ["$dl.categories", []] }, as: "el", cond: { $eq: ["$$el._id", "$categoryId"] } } }, 0] } },
+            in: { $ifNull: ["$$m.value", "—"] },
+          },
+        },
+        materialName: {
+          $let: {
+            vars: { m: { $arrayElemAt: [{ $filter: { input: { $ifNull: ["$dl.materials",  []] }, as: "el", cond: { $eq: ["$$el._id", "$materialId"] } } }, 0] } },
+            in: { $ifNull: ["$$m.value", "—"] },
+          },
+        },
+        shapeName: {
+          $let: {
+            vars: { m: { $arrayElemAt: [{ $filter: { input: { $ifNull: ["$dl.shapes",     []] }, as: "el", cond: { $eq: ["$$el._id", "$shapeId"]    } } }, 0] } },
+            in: { $ifNull: ["$$m.value", "—"] },
+          },
+        },
+        unitName: {
+          $let: {
+            vars: { m: { $arrayElemAt: [{ $filter: { input: { $ifNull: ["$dl.units",      []] }, as: "el", cond: { $eq: ["$$el._id", "$unitId"]     } } }, 0] } },
+            in: { $ifNull: ["$$m.value", "—"] },
+          },
+        },
+        doUnitName: {
+          $let: {
+            vars: { m: { $arrayElemAt: [{ $filter: { input: { $ifNull: ["$dl.units",      []] }, as: "el", cond: { $eq: ["$$el._id", "$doUnitId"]   } } }, 0] } },
+            in: { $ifNull: ["$$m.value", "—"] },
+          },
+        },
+      },
+    },
+
+    { $project: { dl: 0 } },
+  ]);
+
+  if (!item) throw new ApiError("Item not found", 404);
+
+  return { data: { item } };
 });
 
 export const PUT = withErrorHandler(async (request: NextRequest, { params }: RouteParams) => {
@@ -61,21 +110,6 @@ export const PUT = withErrorHandler(async (request: NextRequest, { params }: Rou
       throw new ApiError("Failed to update item", 500);
     }
 
-    // Cascade update to Stock Movements
-    if (data.itemCode || data.itemName !== undefined || data.unit !== undefined) {
-      const movementUpdate: { itemCode?: string; itemName?: string; unit?: string } = {};
-      if (data.itemCode) movementUpdate.itemCode = data.itemCode;
-      if (data.itemName !== undefined) movementUpdate.itemName = data.itemName;
-      if (data.unit !== undefined) movementUpdate.unit = data.unit;
-      
-      if (Object.keys(movementUpdate).length > 0) {
-        await StockMovementModel.updateMany(
-          { itemId: id },
-          { $set: movementUpdate },
-          { session }
-        );
-      }
-    }
 
     await AuditLogModel.create(
       [

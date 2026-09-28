@@ -67,10 +67,10 @@ export function ItemForm({ initialData }: ItemFormProps) {
     resolver: zodResolver(createItemSchema) as unknown as Resolver<CreateItemFormValues>,
     mode: "all",
     defaultValues: initialData || {
-      itemCode: "", itemName: "", classCode: "", className: "",
-      category: "", material: "", shape: "", size: "", color: "",
-      design: "", unit: "", reorderLevel: 0, dp: undefined, tp: undefined, mrp: undefined,
-      doUnit: "", doQty: undefined,
+      itemCode: "", itemName: "", classId: "",
+      categoryId: "", materialId: "", shapeId: "", size: "", color: "",
+      design: "", unitId: "", reorderLevel: 0, dp: undefined, tp: undefined, mrp: undefined,
+      doUnitId: "", doQty: undefined,
     },
   });
 
@@ -84,16 +84,7 @@ export function ItemForm({ initialData }: ItemFormProps) {
     }
   }, [dropdowns, form, initialData]);
 
-  const classCode = useWatch({
-    control: form.control,
-    name: "classCode",
-  });
-  useEffect(() => {
-    if (classCode && dropdowns) {
-      const selectedClass = dropdowns.classes?.find(c => c.code === classCode);
-      form.setValue("className", selectedClass ? selectedClass.className : "");
-    }
-  }, [classCode, dropdowns, form]);
+
 
   const onSubmit = async (data: CreateItemFormValues) => {
     try {
@@ -196,22 +187,21 @@ export function ItemForm({ initialData }: ItemFormProps) {
               </Field>
             </StaggerItem>
             <StaggerItem>
-              <Field label="Class Code">
-                <select {...form.register("classCode")} className={selectCls} style={selectStyle}>
+              <Field label="Class">
+                <select {...form.register("classId")} className={selectCls} style={selectStyle}>
                   <option value="">Select a class</option>
                   {dropdowns?.classes?.map(c => (
-                    <option key={c.code} value={c.code}>{c.code} — {c.className}</option>
+                    <option key={c._id} value={c._id}>{c.code} — {c.className}</option>
                   ))}
                 </select>
-                <input type="hidden" {...form.register("className")} />
               </Field>
             </StaggerItem>
             <StaggerItem>
-              <Field label="Category" required error={form.formState.errors.category?.message}>
-                <select {...form.register("category")} className={selectCls} style={selectStyle}>
+              <Field label="Category" required error={form.formState.errors.categoryId?.message}>
+                <select {...form.register("categoryId")} className={selectCls} style={selectStyle}>
                   <option value="">Select Category</option>
                   {dropdowns?.categories?.map(c => (
-                    <option key={c.value} value={c.value}>{c.value}</option>
+                    <option key={c._id} value={c._id}>{c.value}</option>
                   ))}
                 </select>
               </Field>
@@ -225,20 +215,20 @@ export function ItemForm({ initialData }: ItemFormProps) {
           <StaggerContainer delay={0.1} className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-8">
             <StaggerItem>
               <Field label="Material">
-                <select {...form.register("material")} className={selectCls} style={selectStyle}>
+                <select {...form.register("materialId")} className={selectCls} style={selectStyle}>
                   <option value="">Select Material</option>
                   {dropdowns?.materials?.map(c => (
-                    <option key={c.value} value={c.value}>{c.value}</option>
+                    <option key={c._id} value={c._id}>{c.value}</option>
                   ))}
                 </select>
               </Field>
             </StaggerItem>
             <StaggerItem>
               <Field label="Shape">
-                <select {...form.register("shape")} className={selectCls} style={selectStyle}>
+                <select {...form.register("shapeId")} className={selectCls} style={selectStyle}>
                   <option value="">Select Shape</option>
                   {dropdowns?.shapes?.map(c => (
-                    <option key={c.value} value={c.value}>{c.value}</option>
+                    <option key={c._id} value={c._id}>{c.value}</option>
                   ))}
                 </select>
               </Field>
@@ -274,11 +264,11 @@ export function ItemForm({ initialData }: ItemFormProps) {
               </Field>
             </StaggerItem>
             <StaggerItem>
-              <Field label="Unit" required error={form.formState.errors.unit?.message}>
-                <select {...form.register("unit")} className={selectCls} style={selectStyle}>
+              <Field label="Unit" required error={form.formState.errors.unitId?.message}>
+                <select {...form.register("unitId")} className={selectCls} style={selectStyle}>
                   <option value="">Select Unit</option>
                   {dropdowns?.units?.map(c => (
-                    <option key={c.value} value={c.value}>{c.value}</option>
+                    <option key={c._id} value={c._id}>{c.value}</option>
                   ))}
                 </select>
               </Field>
@@ -316,10 +306,10 @@ export function ItemForm({ initialData }: ItemFormProps) {
             </StaggerItem>
             <StaggerItem>
               <Field label="DO Unit">
-                <select {...form.register("doUnit")} className={selectCls} style={selectStyle}>
+                <select {...form.register("doUnitId")} className={selectCls} style={selectStyle}>
                   <option value="">Select DO Unit</option>
                   {dropdowns?.stockUnits?.map(c => (
-                    <option key={c.value} value={c.value}>{c.value}</option>
+                    <option key={c._id} value={c._id}>{c.value}</option>
                   ))}
                 </select>
               </Field>

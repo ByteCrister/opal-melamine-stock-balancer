@@ -3,14 +3,20 @@ import { NextRequest } from "next/server";
 import ConnectDB from "@/config/db";
 import ItemModel from "@/models/items.model";
 import StockMovementModel from "@/models/stock-movements.model";
+import DropdownListModel from "@/models/dropdown-list.model";
 import { withErrorHandler } from "@/lib/helpers/withErrorHandler";
 import { getUserId } from "@/lib/auth/getUserId";
 import { STOCK_MOVEMENT_TYPE } from "@/const/stock.const";
 import { format } from "date-fns";
+import { getCollectionName } from "@/lib/helpers/get-collection-name";
 
 export const GET = withErrorHandler(async (request: NextRequest) => {
   await getUserId(); // Auth guard
   await ConnectDB();
+
+  const itemsCol         = getCollectionName(ItemModel);
+  const stockMovementsCol = getCollectionName(StockMovementModel);
+  const dropdownsCol      = getCollectionName(DropdownListModel);
 
   const { searchParams } = new URL(request.url);
   const fromParam = searchParams.get("from");
@@ -47,6 +53,7 @@ export const GET = withErrorHandler(async (request: NextRequest) => {
     topStockOutRaw,
     recentActivityRaw,
     lowStockCount,
+    dropdownsRaw,
   ] = await Promise.all([
     // Total product count (including soft-deleted)
     ItemModel.countDocuments({}),
@@ -91,28 +98,62 @@ export const GET = withErrorHandler(async (request: NextRequest) => {
       { $sort: { "_id.date": 1 } },
     ]),
 
-    // Category breakdown
+    // Category breakdown — name resolved inside the pipeline to avoid ObjectId mismatch
     StockMovementModel.aggregate([
       { $match: movementFilter },
       {
         $lookup: {
-          from: "items",
+          from: itemsCol,
           localField: "itemId",
           foreignField: "_id",
           as: "item",
         },
       },
       { $unwind: { path: "$item", preserveNullAndEmptyArrays: false } },
+      // Only include active (non-deleted) items in the breakdown
+      { $match: { "item.deletedAt": null } },
       {
         $group: {
           _id: {
-            category: "$item.category",
+            categoryId: "$item.categoryId",
             type: "$type",
           },
           total: { $sum: "$quantity" },
           itemCount: { $addToSet: "$itemId" },
         },
       },
+      // Resolve the category name from the DropdownList sub-document
+      {
+        $lookup: {
+          from: dropdownsCol,
+          pipeline: [{ $limit: 1 }, { $project: { categories: 1 } }],
+          as: "_ddl",
+        },
+      },
+      {
+        $addFields: {
+          categoryName: {
+            $let: {
+              vars: {
+                matched: {
+                  $filter: {
+                    input: { $arrayElemAt: ["$_ddl.categories", 0] },
+                    as: "cat",
+                    cond: { $eq: ["$$cat._id", "$_id.categoryId"] },
+                  },
+                },
+              },
+              in: {
+                $ifNull: [
+                  { $arrayElemAt: ["$$matched.value", 0] },
+                  "Uncategorized",
+                ],
+              },
+            },
+          },
+        },
+      },
+      { $project: { _ddl: 0 } },
     ]),
 
     // Top 10 stock-in items
@@ -120,12 +161,21 @@ export const GET = withErrorHandler(async (request: NextRequest) => {
       { $match: { ...movementFilter, type: STOCK_MOVEMENT_TYPE.STOCK_IN } },
       {
         $group: {
-          _id: { itemCode: "$itemCode", itemName: "$itemName", unit: "$unit" },
+          _id: "$itemId",
           quantity: { $sum: "$quantity" },
         },
       },
       { $sort: { quantity: -1 } },
       { $limit: 10 },
+      {
+        $lookup: {
+          from: itemsCol,
+          localField: "_id",
+          foreignField: "_id",
+          as: "item",
+        }
+      },
+      { $unwind: "$item" }
     ]),
 
     // Top 10 stock-out items
@@ -133,23 +183,76 @@ export const GET = withErrorHandler(async (request: NextRequest) => {
       { $match: { ...movementFilter, type: STOCK_MOVEMENT_TYPE.STOCK_OUT } },
       {
         $group: {
-          _id: { itemCode: "$itemCode", itemName: "$itemName", unit: "$unit" },
+          _id: "$itemId",
           quantity: { $sum: "$quantity" },
         },
       },
       { $sort: { quantity: -1 } },
       { $limit: 10 },
+      {
+        $lookup: {
+          from: itemsCol,
+          localField: "_id",
+          foreignField: "_id",
+          as: "item",
+        }
+      },
+      { $unwind: "$item" }
     ]),
 
     // Recent 10 activities
-    StockMovementModel.find(movementFilter)
-      .sort({ date: -1 })
-      .limit(10)
-      .lean(),
+    StockMovementModel.aggregate([
+      { $match: movementFilter },
+      { $sort: { date: -1 } },
+      { $limit: 10 },
+      {
+        $lookup: {
+          from: itemsCol,
+          localField: "itemId",
+          foreignField: "_id",
+          as: "item",
+        }
+      },
+      { $unwind: "$item" }
+    ]),
 
-    // Items below reorder level
-    ItemModel.countDocuments({ deletedAt: null, $expr: { $gt: ["$reorderLevel", 0] } }),
+    // Items whose current stock balance is below their reorder level
+    ItemModel.aggregate([
+      { $match: { deletedAt: null, reorderLevel: { $gt: 0 } } },
+      {
+        $lookup: {
+          from: stockMovementsCol,
+          let: { itemId: "$_id" },
+          pipeline: [
+            { $match: { $expr: { $and: [
+              { $eq: ["$itemId", "$$itemId"] },
+              { $eq: ["$deletedAt", null] },
+            ]}}},
+            { $group: {
+              _id: null,
+              balance: {
+                $sum: {
+                  $cond: [
+                    { $eq: ["$type", STOCK_MOVEMENT_TYPE.STOCK_IN] },
+                    "$quantity",
+                    { $multiply: ["$quantity", -1] },
+                  ],
+                },
+              },
+            }},
+          ],
+          as: "stock",
+        },
+      },
+      { $addFields: { balance: { $ifNull: [{ $arrayElemAt: ["$stock.balance", 0] }, 0] } } },
+      { $match: { $expr: { $lt: ["$balance", "$reorderLevel"] } } },
+      { $count: "total" },
+    ]).then((res) => res[0]?.total ?? 0),
+
+    DropdownListModel.findOne().lean(),
   ]);
+
+  const dropdowns = dropdownsRaw as any;
 
   // --- Process KPIs ---
   const currIn  = currentPeriodAgg.find((a) => a._id === STOCK_MOVEMENT_TYPE.STOCK_IN)?.total ?? 0;
@@ -187,7 +290,8 @@ export const GET = withErrorHandler(async (request: NextRequest) => {
   // --- Process Category Breakdown ---
   const catMap: Record<string, { stockIn: number; stockOut: number; itemCount: Set<string> }> = {};
   for (const entry of categoryRaw) {
-    const cat = (entry._id.category as string) || "Uncategorized";
+    // categoryName is now resolved by the pipeline — no JS-side ObjectId comparison needed
+    const cat = (entry.categoryName as string) || "Uncategorized";
     if (!catMap[cat]) catMap[cat] = { stockIn: 0, stockOut: 0, itemCount: new Set() };
     if (entry._id.type === STOCK_MOVEMENT_TYPE.STOCK_IN) catMap[cat].stockIn += entry.total;
     else catMap[cat].stockOut += entry.total;
@@ -202,18 +306,18 @@ export const GET = withErrorHandler(async (request: NextRequest) => {
   }));
 
   // --- Top movers ---
-  const topStockIn = topStockInRaw.map((item) => ({
-    itemCode: item._id.itemCode as string,
-    itemName: item._id.itemName as string,
-    quantity: item.quantity as number,
-    unit: item._id.unit as string,
+  const topStockIn = topStockInRaw.map((entry) => ({
+    itemCode: entry.item.itemCode as string,
+    itemName: entry.item.itemName as string,
+    quantity: entry.quantity as number,
+    unit: dropdowns?.units?.find((u: any) => u._id.toString() === entry.item.unitId?.toString())?.value || "—",
     type: "IN" as const,
   }));
-  const topStockOut = topStockOutRaw.map((item) => ({
-    itemCode: item._id.itemCode as string,
-    itemName: item._id.itemName as string,
-    quantity: item.quantity as number,
-    unit: item._id.unit as string,
+  const topStockOut = topStockOutRaw.map((entry) => ({
+    itemCode: entry.item.itemCode as string,
+    itemName: entry.item.itemName as string,
+    quantity: entry.quantity as number,
+    unit: dropdowns?.units?.find((u: any) => u._id.toString() === entry.item.unitId?.toString())?.value || "—",
     type: "OUT" as const,
   }));
 
@@ -221,10 +325,10 @@ export const GET = withErrorHandler(async (request: NextRequest) => {
   const recentActivity = recentActivityRaw.map((m) => ({
     _id: String(m._id),
     date: format(new Date(m.date), "yyyy-MM-dd"),
-    itemCode: m.itemCode,
-    itemName: m.itemName,
+    itemCode: m.item.itemCode,
+    itemName: m.item.itemName,
     quantity: m.quantity,
-    unit: m.unit ?? "",
+    unit: dropdowns?.units?.find((u: any) => u._id.toString() === m.item.unitId?.toString())?.value || "—",
     type: m.type as "IN" | "OUT",
     remarks: m.remarks,
   }));
