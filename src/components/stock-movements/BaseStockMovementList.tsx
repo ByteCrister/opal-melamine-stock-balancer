@@ -442,7 +442,7 @@ export function BaseStockMovementList({ type }: BaseStockMovementListProps) {
 
                     {/* Actions */}
                     <TableCell className="py-3 text-right">
-                      <div className="flex justify-end gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
+                      <div className="flex justify-end gap-1.5 opacity-100 md:opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity duration-150">
                         <button
                           onClick={() => handleEdit(movement)}
                           className="h-8 w-8 rounded-[7px] flex items-center justify-center transition-colors duration-100"

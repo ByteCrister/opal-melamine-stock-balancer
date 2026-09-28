@@ -16,8 +16,33 @@ export function SignInView() {
                     
                     {/* ── Header ──────────────────────────────────────── */}
                     <div className="flex flex-col gap-2 text-center items-center">
-                        <div className="w-12 h-12 mb-2 flex items-center justify-center rounded-xl bg-[linear-gradient(180deg,#FF3B57_0%,#C41230_100%)] shadow-[0_0_0_1px_rgba(227,28,61,0.45),0_4px_20px_rgba(227,28,61,0.35)] text-white">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+                        <div className="flex items-center gap-3 mb-2">
+                            <div
+                                className="h-10 w-10 rounded-[12px] flex items-center justify-center relative overflow-hidden shrink-0 transition-shadow duration-200"
+                                style={{
+                                    backgroundImage: "var(--gradient-primary-button)",
+                                    boxShadow: "var(--glow-primary-cta)",
+                                }}
+                            >
+                                <span
+                                    aria-hidden
+                                    className="absolute inset-0"
+                                    style={{
+                                        background: "linear-gradient(160deg, rgba(255,255,255,0.28) 0%, rgba(255,255,255,0) 55%)",
+                                        borderRadius: "inherit",
+                                    }}
+                                />
+                                <span className="relative font-sans font-bold text-[18px] text-white tracking-tight">O</span>
+                            </div>
+                            <span
+                                className="font-sans font-medium text-[20px] tracking-[-0.01em] transition-colors"
+                                style={{ color: "var(--text-primary)" }}
+                            >
+                                Opal
+                                <span className="font-semibold" style={{ color: "var(--color-crimson-400)" }}>
+                                    Melamine
+                                </span>
+                            </span>
                         </div>
                         <h2 className="m-0 tracking-tight">
                             Welcome back
