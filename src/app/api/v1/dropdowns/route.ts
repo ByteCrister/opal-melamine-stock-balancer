@@ -2,8 +2,9 @@ import { NextRequest } from "next/server";
 import ConnectDB from "@/config/db";
 import DropdownListModel, { IClassOption } from "@/models/dropdown-list.model";
 import ItemModel from "@/models/items.model";
+import StockMovementModel from "@/models/stock-movements.model";
 import AuditLogModel, { AuditAction } from "@/models/auditLog.model";
-import { withErrorHandler } from "@/lib/helpers/withErrorHandler";
+import { withErrorHandler, ApiError } from "@/lib/helpers/withErrorHandler";
 import { withTransaction } from "@/lib/helpers/withTransaction";
 import { getUserId } from "@/lib/auth/getUserId";
 import { Types, ClientSession } from "mongoose";
@@ -216,6 +217,12 @@ export const PUT = withErrorHandler(async (request: NextRequest) => {
 
       if (oldValue !== value && itemField) {
         await ItemModel.updateMany({ [itemField]: oldValue }, { [itemField]: value }, { session });
+        
+        // If it's a unit, also cascade update the denormalized unit in Stock Movements
+        if (type === "units") {
+          await StockMovementModel.updateMany({ unit: oldValue }, { unit: value }, { session });
+        }
+
         auditDetails.cascadeField = itemField;
         auditDetails.cascadeUpdated = true;
       }
@@ -254,7 +261,7 @@ export const DELETE = withErrorHandler(async (request: NextRequest) => {
     itemId = searchParams.get("itemId") as string;
   }
 
-  if (!type || !itemId) throw new Error("Type and ItemId are required");
+  if (!type || !itemId) throw new ApiError("Type and ItemId are required", 400);
 
   return withTransaction(async (session) => {
     const doc = await getSingleton(userId, session);
@@ -268,7 +275,7 @@ export const DELETE = withErrorHandler(async (request: NextRequest) => {
       }
     >;
     const target = arr.id(itemId);
-    if (!target) throw new Error("Item not found");
+    if (!target) throw new ApiError("Item not found", 404);
 
     // Check if in use before deleting
     let isUsed = false;
@@ -297,8 +304,9 @@ export const DELETE = withErrorHandler(async (request: NextRequest) => {
     }
 
     if (isUsed) {
-      throw new Error(
-        `Cannot delete this ${type.slice(0, -1)} because it is currently used by active items.`
+      throw new ApiError(
+        `Cannot delete this ${type.slice(0, -1)} because it is currently used by active items.`,
+        409
       );
     }
 

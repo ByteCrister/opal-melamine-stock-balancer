@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { Types } from "mongoose";
 import ConnectDB from "@/config/db";
 import ItemModel from "@/models/items.model";
+import StockMovementModel from "@/models/stock-movements.model";
 import AuditLogModel, { AuditAction } from "@/models/auditLog.model";
 import { withErrorHandler, ApiError } from "@/lib/helpers/withErrorHandler";
 import { withTransaction } from "@/lib/helpers/withTransaction";
@@ -55,6 +56,26 @@ export const PUT = withErrorHandler(async (request: NextRequest, { params }: Rou
       { $set: data },
       { new: true, session }
     ).lean();
+
+    if (!updatedItem) {
+      throw new ApiError("Failed to update item", 500);
+    }
+
+    // Cascade update to Stock Movements
+    if (data.itemCode || data.itemName !== undefined || data.unit !== undefined) {
+      const movementUpdate: { itemCode?: string; itemName?: string; unit?: string } = {};
+      if (data.itemCode) movementUpdate.itemCode = data.itemCode;
+      if (data.itemName !== undefined) movementUpdate.itemName = data.itemName;
+      if (data.unit !== undefined) movementUpdate.unit = data.unit;
+      
+      if (Object.keys(movementUpdate).length > 0) {
+        await StockMovementModel.updateMany(
+          { itemId: id },
+          { $set: movementUpdate },
+          { session }
+        );
+      }
+    }
 
     await AuditLogModel.create(
       [
