@@ -21,6 +21,7 @@ export function useCreateItem() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["items"] });
       queryClient.invalidateQueries({ queryKey: ["active-items"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard"] });
     },
   });
 }
@@ -41,6 +42,7 @@ export function useUpdateItem() {
       queryClient.invalidateQueries({ queryKey: ["items"] });
       queryClient.invalidateQueries({ queryKey: ["active-items"] });
       queryClient.invalidateQueries({ queryKey: ["item", variables.id] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard"] });
     },
   });
 }
@@ -60,6 +62,7 @@ export function useDeleteItem() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["items"] });
       queryClient.invalidateQueries({ queryKey: ["active-items"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard"] });
     },
   });
 }

@@ -20,6 +20,7 @@ export function useCreateStockMovement(type: StockMovementType) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["stock-movements", type] });
       queryClient.invalidateQueries({ queryKey: ["stock-balancer"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard"] });
     },
   });
 }
@@ -41,6 +42,7 @@ export function useUpdateStockMovement(type: StockMovementType) {
       queryClient.invalidateQueries({ queryKey: ["stock-movements", type] });
       queryClient.invalidateQueries({ queryKey: ["stock-movement", type, variables.id] });
       queryClient.invalidateQueries({ queryKey: ["stock-balancer"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard"] });
     },
   });
 }
@@ -61,6 +63,7 @@ export function useDeleteStockMovement(type: StockMovementType) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["stock-movements", type] });
       queryClient.invalidateQueries({ queryKey: ["stock-balancer"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard"] });
     },
   });
 }
