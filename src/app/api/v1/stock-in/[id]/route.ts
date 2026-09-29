@@ -55,7 +55,7 @@ export const PUT = withErrorHandler(async (request: NextRequest, { params }: { p
     const movement = await StockMovementModel.findOneAndUpdate(
       { _id: id, type: STOCK_MOVEMENT_TYPE.STOCK_IN, deletedAt: null },
       { $set: parsedData },
-      { new: true, session }
+      { returnDocument: "after", session }
     ).lean();
 
     if (!movement) {
@@ -102,7 +102,7 @@ export const DELETE = withErrorHandler(async (request: NextRequest, { params }: 
     const movement = await StockMovementModel.findOneAndUpdate(
       { _id: id, type: STOCK_MOVEMENT_TYPE.STOCK_IN, deletedAt: null },
       { $set: { deletedAt: new Date() } },
-      { new: true, session }
+      { returnDocument: "after", session }
     ).lean();
 
     if (!movement) {

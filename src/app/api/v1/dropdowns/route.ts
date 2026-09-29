@@ -28,7 +28,7 @@ async function getSingleton(userId: Types.ObjectId | string, session?: ClientSes
         deletedAt:  null,
       },
     },
-    { upsert: true, new: true, session: session ?? undefined }
+    { upsert: true, returnDocument: "after", session: session ?? undefined }
   );
   return doc!;
 }

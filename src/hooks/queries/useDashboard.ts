@@ -1,5 +1,5 @@
 // src/hooks/queries/useDashboard.ts
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import { DashboardData, DashboardQueryParams } from "@/types/dashboard.types";
 import { format } from "date-fns";
 
@@ -45,5 +45,6 @@ export function useDashboard(from: Date, to: Date, isInitialCall = false) {
     gcTime: 1000 * 60 * 10,
     retry: 2,
     enabled: from <= to, // Guard: only fetch when dates are valid
+    placeholderData: keepPreviousData,
   });
 }

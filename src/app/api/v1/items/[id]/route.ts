@@ -103,7 +103,7 @@ export const PUT = withErrorHandler(async (request: NextRequest, { params }: Rou
     const updatedItem = await ItemModel.findOneAndUpdate(
       { _id: id, deletedAt: null },
       { $set: data },
-      { new: true, session }
+      { returnDocument: "after", session }
     ).lean();
 
     if (!updatedItem) {
@@ -143,7 +143,7 @@ export const DELETE = withErrorHandler(async (request: NextRequest, { params }: 
     const item = await ItemModel.findOneAndUpdate(
       { _id: id, deletedAt: null },
       { $set: { deletedAt: new Date() } },
-      { new: true, session }
+      { returnDocument: "after", session }
     ).lean();
 
     if (!item) {

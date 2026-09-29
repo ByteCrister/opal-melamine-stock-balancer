@@ -18,6 +18,7 @@ import { DeleteDropdownDialog } from "./DeleteDropdownDialog";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useReorderDropdowns } from "@/hooks/mutations/useDropdownMutations";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 import {
   DndContext,
@@ -185,8 +186,9 @@ export function DropdownListTable({ data }: DropdownListTableProps) {
   const [deleteItem, setDeleteItem] = useState<ClassOption | DropdownItem | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedSearch = useDebounce(searchQuery, 300);
+  const [hasPendingChanges, setHasPendingChanges] = useState(false);
 
-  const { mutate: reorderDropdowns } = useReorderDropdowns();
+  const { mutate: reorderDropdowns, isPending: isReordering } = useReorderDropdowns();
 
   const [prevDeps, setPrevDeps] = useState({ data, activeTab, searchQuery: debouncedSearch });
   const [itemsList, setItemsList] = useState<(ClassOption | DropdownItem)[]>(
@@ -200,6 +202,7 @@ export function DropdownListTable({ data }: DropdownListTableProps) {
   ) {
     setPrevDeps({ data, activeTab, searchQuery: debouncedSearch });
     setItemsList(getFilteredItems(data, activeTab, debouncedSearch));
+    setHasPendingChanges(false);
   }
 
   const sensors = useSensors(
@@ -214,7 +217,7 @@ export function DropdownListTable({ data }: DropdownListTableProps) {
         const oldIdx = items.findIndex((i) => i._id === active.id);
         const newIdx = items.findIndex((i) => i._id === over.id);
         const next   = arrayMove(items, oldIdx, newIdx);
-        reorderDropdowns({ type: activeTab, orderedIds: next.map((i) => i._id) });
+        setHasPendingChanges(true);
         return next;
       });
     }
@@ -228,20 +231,55 @@ export function DropdownListTable({ data }: DropdownListTableProps) {
   return (
     <div className="flex flex-col gap-4">
 
-      {/* Search bar */}
-      <div className="relative w-full md:max-w-sm">
-        <Search
-          className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 pointer-events-none"
-          style={{ color: "var(--text-muted)" }}
-        />
-        <Input
-          type="search"
-          placeholder="Search items…"
-          className="pl-9 h-9 text-[13px]"
-          style={inputStyle}
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-        />
+      {/* Search bar & Actions */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="relative w-full md:max-w-sm">
+          <Search
+            className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 pointer-events-none"
+            style={{ color: "var(--text-muted)" }}
+          />
+          <Input
+            type="search"
+            placeholder="Search items…"
+            className="pl-9 h-9 text-[13px]"
+            style={inputStyle}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
+
+        {hasPendingChanges && (
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => {
+                setItemsList(getFilteredItems(data, activeTab, debouncedSearch));
+                setHasPendingChanges(false);
+              }}
+              className="px-4 py-1.5 rounded-[var(--radius-md)] text-[13px] font-medium transition-colors"
+              style={{ background: "var(--surface-sunken)", color: "var(--text-secondary)", border: "1px solid var(--border-subtle)" }}
+              disabled={isReordering}
+            >
+              Cancel
+            </button>
+            <button
+              onClick={() => {
+                reorderDropdowns(
+                  { type: activeTab, orderedIds: itemsList.map((i) => i._id) },
+                  {
+                    onSuccess: () => {
+                      setHasPendingChanges(false);
+                      toast.success("Order saved successfully");
+                    }
+                  }
+                );
+              }}
+              className="btn-primary px-4 py-1.5 text-[13px]"
+              disabled={isReordering}
+            >
+              {isReordering ? "Saving..." : "Save Order"}
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Drag hint */}

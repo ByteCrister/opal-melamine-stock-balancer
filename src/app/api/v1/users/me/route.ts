@@ -35,7 +35,7 @@ export const PATCH = withErrorHandler(async (request: NextRequest) => {
         const user = await UserModel.findByIdAndUpdate(
             userId,
             { name: name.trim() },
-            { new: true, runValidators: true, session }
+            { returnDocument: "after", runValidators: true, session }
         )
         .select("-passwordHash -__v")
         .lean();
