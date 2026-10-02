@@ -1,9 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useUserStore } from "@/store/useUserStore";
 import { AppSidebar } from "@/components/sidebar/AppSidebar";
 import { usePathname } from "next/navigation";
+import { Logo } from "@/components/shared/Logo";
+import { cn } from "@/lib/utils";
 
 
 /**
@@ -16,6 +18,30 @@ export function DashboardWrapper({ children }: { children: React.ReactNode }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = usePathname();
   const [prevPathname, setPrevPathname] = useState(pathname);
+
+  // Scroll state
+  const [isTopbarVisible, setIsTopbarVisible] = useState(true);
+  const lastScrollY = useRef(0);
+
+  const handleScroll = (e: React.UIEvent<HTMLElement>) => {
+    const currentScrollY = e.currentTarget.scrollTop;
+    
+    if (currentScrollY <= 10) {
+      setIsTopbarVisible(true);
+      lastScrollY.current = currentScrollY;
+      return;
+    }
+    
+    if (currentScrollY > lastScrollY.current + 10) {
+      // Scrolling down
+      setIsTopbarVisible(false);
+      lastScrollY.current = currentScrollY;
+    } else if (currentScrollY < lastScrollY.current - 10) {
+      // Scrolling up
+      setIsTopbarVisible(true);
+      lastScrollY.current = currentScrollY;
+    }
+  };
 
   // Close drawer on route change
   if (pathname !== prevPathname) {
@@ -46,7 +72,10 @@ export function DashboardWrapper({ children }: { children: React.ReactNode }) {
 
         {/* Mobile top bar — only visible below md */}
         <header
-          className="md:hidden flex items-center gap-3 h-14 px-4 shrink-0"
+          className={cn(
+            "md:hidden absolute top-0 left-0 right-0 z-30 flex items-center gap-3 h-14 px-4 shrink-0 transition-transform duration-300 ease-in-out",
+            isTopbarVisible ? "translate-y-0" : "-translate-y-full"
+          )}
           style={{
             background: "var(--sidebar-bg)",
             backgroundImage: "var(--sidebar-bg-overlay)",
@@ -79,40 +108,13 @@ export function DashboardWrapper({ children }: { children: React.ReactNode }) {
           </button>
 
           {/* Logo mark + wordmark */}
-          <div className="flex items-center gap-2.5">
-            <div
-              className="h-7 w-7 rounded-[8px] flex items-center justify-center relative overflow-hidden shrink-0"
-              style={{
-                backgroundImage: "var(--gradient-primary-button)",
-                boxShadow: "var(--glow-primary-cta)",
-              }}
-            >
-              <span
-                aria-hidden
-                className="absolute inset-0"
-                style={{
-                  background: "linear-gradient(160deg, rgba(255,255,255,0.28) 0%, rgba(255,255,255,0) 55%)",
-                  borderRadius: "inherit",
-                }}
-              />
-              <span className="relative font-sans font-bold text-[13px] text-white tracking-tight">O</span>
-            </div>
-            <span
-              className="font-sans font-medium text-[14.5px]"
-              style={{ color: "var(--text-primary)", letterSpacing: "-0.01em" }}
-            >
-              Opal
-              <span className="font-semibold" style={{ color: "var(--color-crimson-400)" }}>
-                Melamine
-              </span>
-            </span>
-          </div>
+          <Logo size="sm" />
           </div>
         </header>
 
         {/* Page content */}
-        <main className="flex-1 overflow-y-auto overflow-x-hidden">
-          <div className="p-4 md:px-6 md:py-6 lg:px-8 lg:py-6 max-w-[1400px] mx-auto w-full">
+        <main className="flex-1 overflow-y-auto overflow-x-hidden" onScroll={handleScroll}>
+          <div className="p-4 pt-[72px] md:pt-6 md:px-6 md:py-6 lg:px-8 lg:py-6 max-w-[1400px] mx-auto w-full">
             {children}
           </div>
         </main>

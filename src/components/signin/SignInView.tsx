@@ -1,4 +1,5 @@
 import { SignInForm } from "@/components/signin/SignInForm";
+import { Logo } from "@/components/shared/Logo";
 
 /**
  * Client component that renders the complete Sign-in UI.
@@ -16,34 +17,7 @@ export function SignInView() {
                     
                     {/* ── Header ──────────────────────────────────────── */}
                     <div className="flex flex-col gap-2 text-center items-center">
-                        <div className="flex items-center gap-3 mb-2">
-                            <div
-                                className="h-10 w-10 rounded-[12px] flex items-center justify-center relative overflow-hidden shrink-0 transition-shadow duration-200"
-                                style={{
-                                    backgroundImage: "var(--gradient-primary-button)",
-                                    boxShadow: "var(--glow-primary-cta)",
-                                }}
-                            >
-                                <span
-                                    aria-hidden
-                                    className="absolute inset-0"
-                                    style={{
-                                        background: "linear-gradient(160deg, rgba(255,255,255,0.28) 0%, rgba(255,255,255,0) 55%)",
-                                        borderRadius: "inherit",
-                                    }}
-                                />
-                                <span className="relative font-sans font-bold text-[18px] text-white tracking-tight">O</span>
-                            </div>
-                            <span
-                                className="font-sans font-medium text-[20px] tracking-[-0.01em] transition-colors"
-                                style={{ color: "var(--text-primary)" }}
-                            >
-                                Opal
-                                <span className="font-semibold" style={{ color: "var(--color-crimson-400)" }}>
-                                    Melamine
-                                </span>
-                            </span>
-                        </div>
+                        <Logo size="lg" className="mb-2" />
                         <h2 className="m-0 tracking-tight">
                             Welcome back
                         </h2>

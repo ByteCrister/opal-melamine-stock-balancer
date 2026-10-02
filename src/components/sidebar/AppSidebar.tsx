@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { Logo } from "@/components/shared/Logo";
 import {
   LayoutDashboard,
   Package2,
@@ -71,34 +72,8 @@ function SidebarContent({ onLinkClick, onLogoutClick }: { onLinkClick?: () => vo
         {/* ── Logo ────────────────────────────────────────────────── */}
         <div style={{ borderBottom: "1px solid var(--sidebar-divider)" }}>
           <FadeInLeft className="h-16 flex items-center px-5" delay={0.1}>
-            <Link href="/" className="flex items-center gap-3 select-none group" onClick={onLinkClick}>
-              {/* Glossy logo-mark */}
-            <div
-              className="h-8 w-8 rounded-[10px] flex items-center justify-center relative overflow-hidden shrink-0 transition-shadow duration-200"
-              style={{
-                backgroundImage: "var(--gradient-primary-button)",
-                boxShadow: "var(--glow-primary-cta)",
-              }}
-            >
-              <span
-                aria-hidden
-                className="absolute inset-0"
-                style={{
-                  background: "linear-gradient(160deg, rgba(255,255,255,0.28) 0%, rgba(255,255,255,0) 55%)",
-                  borderRadius: "inherit",
-                }}
-              />
-              <span className="relative font-sans font-bold text-[15px] text-white tracking-tight">O</span>
-            </div>
-            <span
-              className="font-sans font-medium text-[15.5px] tracking-[-0.01em] transition-colors"
-              style={{ color: "var(--text-primary)" }}
-            >
-              Opal
-              <span className="font-semibold" style={{ color: "var(--color-crimson-400)" }}>
-                Melamine
-              </span>
-            </span>
+            <Link href="/" className="flex items-center select-none group" onClick={onLinkClick}>
+              <Logo size="md" />
           </Link>
 
           {/* Mobile close button — only inside the drawer */}

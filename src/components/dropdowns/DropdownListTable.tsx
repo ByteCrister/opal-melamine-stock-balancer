@@ -28,6 +28,7 @@ import {
   useSensor,
   useSensors,
   DragEndEvent,
+  TouchSensor,
 } from "@dnd-kit/core";
 import {
   arrayMove,
@@ -95,7 +96,7 @@ function SortableTableRow({ item, isClasses, onEdit, onDelete, isDragDisabled }:
         <TableCell className="w-[36px] px-2 text-center">
           <button
             className="h-7 w-7 rounded-[6px] flex items-center justify-center cursor-grab active:cursor-grabbing transition-colors duration-100"
-            style={{ color: "var(--text-muted)", background: "transparent" }}
+            style={{ color: "var(--text-muted)", background: "transparent", touchAction: "none" }}
             {...attributes}
             {...listeners}
             title="Drag to reorder"
@@ -206,7 +207,17 @@ export function DropdownListTable({ data }: DropdownListTableProps) {
   }
 
   const sensors = useSensors(
-    useSensor(PointerSensor),
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 5,
+      },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 250,
+        tolerance: 5,
+      },
+    }),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
   );
 
