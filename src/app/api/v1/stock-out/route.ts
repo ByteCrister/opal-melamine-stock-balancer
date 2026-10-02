@@ -3,7 +3,8 @@ import ConnectDB from "@/config/db";
 import StockMovementModel from "@/models/stock-movements.model";
 import ItemModel from "@/models/items.model";
 import DropdownListModel from "@/models/dropdown-list.model";
-import AuditLogModel, { AuditAction } from "@/models/auditLog.model";
+import { AuditAction } from "@/models/auditLog.model";
+import { createAuditLog } from "@/lib/helpers/audit";
 import { withErrorHandler, ApiError } from "@/lib/helpers/withErrorHandler";
 import { withTransaction } from "@/lib/helpers/withTransaction";
 import { getUserId } from "@/lib/auth/getUserId";
@@ -100,8 +101,8 @@ export const POST = withErrorHandler(async (request: NextRequest) => {
       createdBy: userId,
     }], { session });
 
-    await AuditLogModel.create([{
-      user: new Types.ObjectId(userId),
+    await createAuditLog(request, {
+      user: userId,
       action: AuditAction.STOCK_DISPATCHED,
       entityType: "StockMovement",
       entityId: movement._id,
@@ -112,7 +113,7 @@ export const POST = withErrorHandler(async (request: NextRequest) => {
         date: parsedData.date,
         remarks: parsedData.remarks,
       },
-    }], { session });
+    }, session);
 
     return {
       data: {

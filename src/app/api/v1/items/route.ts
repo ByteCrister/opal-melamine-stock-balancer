@@ -2,7 +2,8 @@ import { NextRequest } from "next/server";
 import { PipelineStage, Types } from "mongoose";
 import ConnectDB from "@/config/db";
 import ItemModel from "@/models/items.model";
-import AuditLogModel, { AuditAction } from "@/models/auditLog.model";
+import { AuditAction } from "@/models/auditLog.model";
+import { createAuditLog } from "@/lib/helpers/audit";
 import { withErrorHandler, ApiError } from "@/lib/helpers/withErrorHandler";
 import { withTransaction } from "@/lib/helpers/withTransaction";
 import { getUserId } from "@/lib/auth/getUserId";
@@ -235,20 +236,21 @@ export const POST = withErrorHandler(async (request: NextRequest) => {
     const newItem = new ItemModel({ ...data, createdBy: userId });
     await newItem.save({ session });
 
-    await AuditLogModel.create(
-      [{
-        user:       new Types.ObjectId(userId),
-        action:     AuditAction.ITEM_CREATED,
+    await createAuditLog(
+      request,
+      {
+        user: userId,
+        action: AuditAction.ITEM_CREATED,
         entityType: "Item",
-        entityId:   newItem._id,
+        entityId: newItem._id,
         details: {
-          itemCode:   newItem.itemCode,
-          itemName:   newItem.itemName,
+          itemCode: newItem.itemCode,
+          itemName: newItem.itemName,
           categoryId: newItem.categoryId,
-          classId:    newItem.classId,
+          classId: newItem.classId,
         },
-      }],
-      { session }
+      },
+      session
     );
 
     return { data: { success: true, message: "Item created successfully", item: newItem } };

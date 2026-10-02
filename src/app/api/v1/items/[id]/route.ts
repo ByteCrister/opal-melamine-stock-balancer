@@ -3,7 +3,8 @@ import { Types } from "mongoose";
 import ConnectDB from "@/config/db";
 import ItemModel from "@/models/items.model";
 import StockMovementModel from "@/models/stock-movements.model";
-import AuditLogModel, { AuditAction } from "@/models/auditLog.model";
+import { AuditAction } from "@/models/auditLog.model";
+import { createAuditLog } from "@/lib/helpers/audit";
 import { withErrorHandler, ApiError } from "@/lib/helpers/withErrorHandler";
 import { withTransaction } from "@/lib/helpers/withTransaction";
 import { getUserId } from "@/lib/auth/getUserId";
@@ -111,21 +112,20 @@ export const PUT = withErrorHandler(async (request: NextRequest, { params }: Rou
     }
 
 
-    await AuditLogModel.create(
-      [
-        {
-          user: new Types.ObjectId(userId),
-          action: AuditAction.ITEM_UPDATED,
-          entityType: "Item",
-          entityId: new Types.ObjectId(id),
-          details: {
-            itemCode: updatedItem.itemCode,
-            itemName: updatedItem.itemName,
-            changedFields: Object.keys(data),
-          },
+    await createAuditLog(
+      request,
+      {
+        user: userId,
+        action: AuditAction.ITEM_UPDATED,
+        entityType: "Item",
+        entityId: id,
+        details: {
+          itemCode: updatedItem.itemCode,
+          itemName: updatedItem.itemName,
+          changedFields: Object.keys(data),
         },
-      ],
-      { session }
+      },
+      session
     );
 
     return {
@@ -150,21 +150,20 @@ export const DELETE = withErrorHandler(async (request: NextRequest, { params }: 
       throw new ApiError("Item not found", 404);
     }
 
-    await AuditLogModel.create(
-      [
-        {
-          user: new Types.ObjectId(userId),
-          action: AuditAction.ITEM_DELETED,
-          entityType: "Item",
-          entityId: new Types.ObjectId(id),
-          details: {
-            itemCode: item.itemCode,
-            itemName: item.itemName,
-            softDeleted: true,
-          },
+    await createAuditLog(
+      request,
+      {
+        user: userId,
+        action: AuditAction.ITEM_DELETED,
+        entityType: "Item",
+        entityId: id,
+        details: {
+          itemCode: item.itemCode,
+          itemName: item.itemName,
+          softDeleted: true,
         },
-      ],
-      { session }
+      },
+      session
     );
 
     return {

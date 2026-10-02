@@ -2,11 +2,11 @@ import { NextRequest } from "next/server";
 import ConnectDB from "@/config/db";
 import DropdownListModel, { IClassOption } from "@/models/dropdown-list.model";
 import ItemModel from "@/models/items.model";
-import StockMovementModel from "@/models/stock-movements.model";
-import AuditLogModel, { AuditAction } from "@/models/auditLog.model";
+import { AuditAction } from "@/models/auditLog.model";
 import { withErrorHandler, ApiError } from "@/lib/helpers/withErrorHandler";
 import { withTransaction } from "@/lib/helpers/withTransaction";
 import { getUserId } from "@/lib/auth/getUserId";
+import { createAuditLog } from "@/lib/helpers/audit";
 import { Types, ClientSession } from "mongoose";
 import { DropdownType } from "@/types/dropdown.types";
 
@@ -96,21 +96,20 @@ export const POST = withErrorHandler(async (request: NextRequest) => {
 
     await doc.save({ session });
 
-    await AuditLogModel.create(
-      [
-        {
-          user: new Types.ObjectId(userId),
-          action: AuditAction.DROPDOWN_UPDATED,
-          entityType: "DropdownList",
-          entityId: doc._id,
-          details: {
-            operation: "ADD",
-            dropdownType: type,
-            added: addedLabel,
-          },
+    await createAuditLog(
+      request,
+      {
+        user: userId,
+        action: AuditAction.DROPDOWN_UPDATED,
+        entityType: "DropdownList",
+        entityId: doc._id,
+        details: {
+          operation: "ADD",
+          dropdownType: type,
+          added: addedLabel,
         },
-      ],
-      { session }
+      },
+      session
     );
 
     return { data: { success: true, message: "Added successfully" } };
@@ -200,17 +199,16 @@ export const PUT = withErrorHandler(async (request: NextRequest) => {
 
     await doc.save({ session });
 
-    await AuditLogModel.create(
-      [
-        {
-          user: new Types.ObjectId(userId),
-          action: AuditAction.DROPDOWN_UPDATED,
-          entityType: "DropdownList",
-          entityId: doc._id,
-          details: auditDetails,
-        },
-      ],
-      { session }
+    await createAuditLog(
+      request,
+      {
+        user: userId,
+        action: AuditAction.DROPDOWN_UPDATED,
+        entityType: "DropdownList",
+        entityId: doc._id,
+        details: auditDetails,
+      },
+      session
     );
 
     return { data: { success: true, message: "Updated successfully" } };
@@ -287,23 +285,22 @@ export const DELETE = withErrorHandler(async (request: NextRequest) => {
     target.deletedAt = new Date();
     await doc.save({ session });
 
-    await AuditLogModel.create(
-      [
-        {
-          user: new Types.ObjectId(userId),
-          action: AuditAction.DROPDOWN_UPDATED,
-          entityType: "DropdownList",
-          entityId: doc._id,
-          details: {
-            operation: "DELETE",
-            dropdownType: type,
-            itemId,
-            deleted: deletedLabel,
-            softDeleted: true,
-          },
+    await createAuditLog(
+      request,
+      {
+        user: userId,
+        action: AuditAction.DROPDOWN_UPDATED,
+        entityType: "DropdownList",
+        entityId: doc._id,
+        details: {
+          operation: "DELETE",
+          dropdownType: type,
+          itemId,
+          deleted: deletedLabel,
+          softDeleted: true,
         },
-      ],
-      { session }
+      },
+      session
     );
 
     return { data: { success: true, message: "Deleted successfully" } };
@@ -346,21 +343,20 @@ export const PATCH = withErrorHandler(async (request: NextRequest) => {
 
     await doc.save({ session });
 
-    await AuditLogModel.create(
-      [
-        {
-          user: new Types.ObjectId(userId),
-          action: AuditAction.DROPDOWN_UPDATED,
-          entityType: "DropdownList",
-          entityId: doc._id,
-          details: {
-            operation: "REORDER",
-            dropdownType: type,
-            newOrder: orderedIds,
-          },
+    await createAuditLog(
+      request,
+      {
+        user: userId,
+        action: AuditAction.DROPDOWN_UPDATED,
+        entityType: "DropdownList",
+        entityId: doc._id,
+        details: {
+          operation: "REORDER",
+          dropdownType: type,
+          newOrder: orderedIds,
         },
-      ],
-      { session }
+      },
+      session
     );
 
     return { data: { success: true, message: "Reordered successfully" } };

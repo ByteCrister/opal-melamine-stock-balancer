@@ -3,7 +3,8 @@ import { Types } from "mongoose";
 import ConnectDB from "@/config/db";
 import StockMovementModel from "@/models/stock-movements.model";
 import ItemModel from "@/models/items.model";
-import AuditLogModel, { AuditAction } from "@/models/auditLog.model";
+import { AuditAction } from "@/models/auditLog.model";
+import { createAuditLog } from "@/lib/helpers/audit";
 import { withErrorHandler, ApiError } from "@/lib/helpers/withErrorHandler";
 import { withTransaction } from "@/lib/helpers/withTransaction";
 import { getUserId } from "@/lib/auth/getUserId";
@@ -64,23 +65,22 @@ export const PUT = withErrorHandler(async (request: NextRequest, { params }: { p
 
     const itemRecord = await ItemModel.findById(movement.itemId).session(session).lean();
 
-    await AuditLogModel.create(
-      [
-        {
-          user: new Types.ObjectId(userId),
-          action: AuditAction.STOCK_ADJUSTED,
-          entityType: "StockMovement",
-          entityId: new Types.ObjectId(id),
-          details: {
-            operation: "UPDATE",
-            type: STOCK_MOVEMENT_TYPE.STOCK_IN,
-            itemCode: itemRecord?.itemCode || "—",
-            itemName: itemRecord?.itemName || "—",
-            changedFields: Object.keys(parsedData),
-          },
+    await createAuditLog(
+      request,
+      {
+        user: userId,
+        action: AuditAction.STOCK_ADJUSTED,
+        entityType: "StockMovement",
+        entityId: id,
+        details: {
+          operation: "UPDATE",
+          type: STOCK_MOVEMENT_TYPE.STOCK_IN,
+          itemCode: itemRecord?.itemCode || "—",
+          itemName: itemRecord?.itemName || "—",
+          changedFields: Object.keys(parsedData),
         },
-      ],
-      { session }
+      },
+      session
     );
 
     return {
@@ -111,23 +111,22 @@ export const DELETE = withErrorHandler(async (request: NextRequest, { params }: 
 
     const itemRecord = await ItemModel.findById(movement.itemId).session(session).lean();
 
-    await AuditLogModel.create(
-      [
-        {
-          user: new Types.ObjectId(userId),
-          action: AuditAction.STOCK_REVERTED,
-          entityType: "StockMovement",
-          entityId: new Types.ObjectId(id),
-          details: {
-            operation: "DELETE",
-            type: STOCK_MOVEMENT_TYPE.STOCK_IN,
-            itemCode: itemRecord?.itemCode || "—",
-            itemName: itemRecord?.itemName || "—",
-            softDeleted: true,
-          },
+    await createAuditLog(
+      request,
+      {
+        user: userId,
+        action: AuditAction.STOCK_REVERTED,
+        entityType: "StockMovement",
+        entityId: id,
+        details: {
+          operation: "DELETE",
+          type: STOCK_MOVEMENT_TYPE.STOCK_IN,
+          itemCode: itemRecord?.itemCode || "—",
+          itemName: itemRecord?.itemName || "—",
+          softDeleted: true,
         },
-      ],
-      { session }
+      },
+      session
     );
 
     return {
