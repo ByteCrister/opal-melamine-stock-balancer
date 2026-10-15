@@ -278,11 +278,11 @@ export const DELETE = withErrorHandler(async (request: NextRequest) => {
       );
     }
 
-    // Capture identity before soft-delete for the audit record
+    // Capture identity before hard-delete for the audit record
     const deletedLabel =
       type === "classes" ? `${target.code} – ${target.className}` : target.value;
 
-    target.deletedAt = new Date();
+    arr.pull({ _id: itemId });
     await doc.save({ session });
 
     await createAuditLog(
@@ -297,7 +297,7 @@ export const DELETE = withErrorHandler(async (request: NextRequest) => {
           dropdownType: type,
           itemId,
           deleted: deletedLabel,
-          softDeleted: true,
+          hardDeleted: true,
         },
       },
       session

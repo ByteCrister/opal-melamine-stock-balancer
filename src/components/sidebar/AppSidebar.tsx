@@ -12,7 +12,6 @@ import {
   ArrowUpFromLine,
   Scale,
   List,
-  Trash2,
   User as UserIcon,
   LogOut,
   ChevronUp,
@@ -48,7 +47,6 @@ export const SIDEBAR_LINKS = [
   { name: "Stock-out",      href: "/stock-out",      icon: ArrowUpFromLine },
   { name: "Stock-balancer", href: "/stock-balancer", icon: Scale },
   { name: "DropdownList",   href: "/dropdowns",      icon: List },
-  { name: "RecycleBin",     href: "/recycle-bin",    icon: Trash2 },
 ];
 
 interface AppSidebarProps {

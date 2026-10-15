@@ -719,8 +719,8 @@ code, kbd, pre, samp {
     box-shadow: var(--metric-card-shadow);
 }
 
-/* Premium primary CTA button */
-.btn-primary {
+.btn-primary,
+a.btn-primary {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -744,7 +744,9 @@ code, kbd, pre, samp {
     user-select: none;
     white-space: nowrap;
 }
-.btn-primary:hover:not(:disabled) {
+.btn-primary:hover:not(:disabled),
+a.btn-primary:hover {
+    color: var(--text-on-primary);
     background-image: var(--gradient-primary-button-hover);
     box-shadow: var(--glow-primary-cta-hover);
     transform: translateY(-1px);

@@ -98,10 +98,9 @@ export const DELETE = withErrorHandler(async (request: NextRequest, { params }: 
   await ConnectDB();
 
   return withTransaction(async (session) => {
-    const movement = await StockMovementModel.findOneAndUpdate(
-      { _id: id, type: STOCK_MOVEMENT_TYPE.STOCK_OUT, deletedAt: null },
-      { $set: { deletedAt: new Date() } },
-      { returnDocument: "after", session }
+    const movement = await StockMovementModel.findOneAndDelete(
+      { _id: id, type: STOCK_MOVEMENT_TYPE.STOCK_OUT },
+      { session }
     ).lean();
 
     if (!movement) {
@@ -122,7 +121,7 @@ export const DELETE = withErrorHandler(async (request: NextRequest, { params }: 
           type: STOCK_MOVEMENT_TYPE.STOCK_OUT,
           itemCode: itemRecord?.itemCode || "—",
           itemName: itemRecord?.itemName || "—",
-          softDeleted: true,
+          hardDeleted: true,
         },
       },
       session

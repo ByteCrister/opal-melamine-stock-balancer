@@ -140,15 +140,17 @@ export const DELETE = withErrorHandler(async (request: NextRequest, { params }: 
   await ConnectDB();
 
   return withTransaction(async (session) => {
-    const item = await ItemModel.findOneAndUpdate(
-      { _id: id, deletedAt: null },
-      { $set: { deletedAt: new Date() } },
-      { returnDocument: "after", session }
+    const item = await ItemModel.findOneAndDelete(
+      { _id: id },
+      { session }
     ).lean();
 
     if (!item) {
       throw new ApiError("Item not found", 404);
     }
+
+    // Also remove all stock movements associated with this item
+    await StockMovementModel.deleteMany({ itemId: id }, { session });
 
     await createAuditLog(
       request,
@@ -160,7 +162,7 @@ export const DELETE = withErrorHandler(async (request: NextRequest, { params }: 
         details: {
           itemCode: item.itemCode,
           itemName: item.itemName,
-          softDeleted: true,
+          hardDeleted: true,
         },
       },
       session
